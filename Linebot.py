@@ -24,10 +24,9 @@ app = Flask(__name__)
 # LINE 聊天機器人的基本資料
 
 # Johnson linebot message API - Channel access token (from LINE Developer)
-line_bot_api = LineBotApi('')
+line_bot_api = LineBotApi(os.environ.get("CHANNEL_ACCESS_TOKEN"))
 # Johnson linebot message API - Channel secret
-handler = WebhookHandler('')
-
+handler = WebhookHandler(os.environ.get("CHANNEL_SECRET"))
 
 
 # connect to database(SQLalchemy)
