@@ -1,6 +1,6 @@
 {
-    "name": "echo bot - LINE Messaging API",
-    "description": "This is a sample application for the LINE Messaging API",
+    "name": "Eng scoring API",
+    "description": "Eng Oral Scoring API",
     "keywords": ["chatbot", "line", "python"],
     "env": {
         "CHANNEL_ACCESS_TOKEN": {
