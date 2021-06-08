@@ -14,7 +14,6 @@ from linebot.models import MessageEvent, TextMessage, TextSendMessage
 # import for database (SQLalchemy)
 
 
-
 # LINE 聊天機器人的基本資料
 
 app = Flask(__name__)
@@ -26,14 +25,13 @@ handler = WebhookHandler(os.environ.get("CHANNEL_SECRET"))
 # 瀏覽器介面for Teacher to review database (GiAI)
 
 
-# Linebot part 
+# Linebot part
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/callback", methods=["GET", "POST"])
 def callback():
 
     if request.method == "GET":
         return "Hello Heroku"
-
 
     if request.method == "POST":
         signature = request.headers["X-Line-Signature"]
@@ -56,7 +54,6 @@ def handle_message(event):
     # Send To Line
     reply = TextSendMessage(text=f"{get_message}")
     line_bot_api.reply_message(event.reply_token, reply)
-
 
 
 # Run app on Heroku server
