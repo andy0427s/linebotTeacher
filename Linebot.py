@@ -23,7 +23,7 @@ line_bot_api = LineBotApi(os.environ.get("CHANNEL_ACCESS_TOKEN"))
 handler = WebhookHandler(os.environ.get("CHANNEL_SECRET"))
 
 
-# 瀏覽器介面for Teacher to review database ()
+# 瀏覽器介面for Teacher to review database (GiAI)
 
 
 # Linebot part 
