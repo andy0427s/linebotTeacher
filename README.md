@@ -2,13 +2,11 @@
 
 Allows a teacher to view audio recordings sent by students via LINE
 
-Johnson Test
+工作日誌
 
-last updated: 2021.06.03:21:06
+6/8 
+全員設置好Github專案
+完成Linebot 基礎設置 ＋ Heroku 串接 
 
-123
-Andy test Github on 2021.06.08
+Andy on 2021.06.08
 
-Yun test
-
-testing
