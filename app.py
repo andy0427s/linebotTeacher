@@ -1,3 +1,4 @@
+from enum import unique
 from flask import Flask, render_template, url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -19,9 +20,23 @@ db = SQLAlchemy(app)
 
 class Student(db.Model):
     __tablename__ = 'student'
-    sid = db.Column(db.Integer, primary_key=True)
-    sname = db.Column(db.String(20), nullable=False)
-    lineid = db.Column(db.String(30), unique=True, nullable=False)
+    sId = db.Column(db.Integer, primary_key=True)
+    sName = db.Column(db.String(20), nullable=False)
+    lineId = db.Column(db.String(30), unique=True, nullable=False)
+
+
+class Homework(db.Model):
+    __tablename__ = 'homework'
+    aId = db.Column(db.Integer, nullable=False)
+    sId = db.Column(db.Integer, unique=True, nullable=False)
+    file = db.Column(db.String(50), primary_key=True)
+    submit_time = db.Column(db.DateTime, nullable=False, default=datetime.now)
+
+
+class Assignment(db.Model):
+    __tablename__ = 'assignment'
+    aId = db.Column(db.Integer, primary_key=True)
+    prompt = db.Column(db.String(80))
 
 
 @app.route('/')
