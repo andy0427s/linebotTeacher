@@ -24,6 +24,9 @@ class Student(db.Model):
     sName = db.Column(db.String(20), nullable=False)
     lineId = db.Column(db.String(30), unique=True, nullable=False)
 
+    def __repr__(self):
+        return f'<Student ID: {self.sId}, Name: {self.sName}, LINE: {self.lineId}>'
+
 
 class Homework(db.Model):
     __tablename__ = 'homework'
@@ -57,6 +60,16 @@ def review():
                            page_header="Review")
 
 
+@app.route('/students')
+def students():
+    results = Student.query.all()
+    # for i in results:
+    #     print(i.sId, i.sName, i.lineId)
+    return render_template('students.html',
+                           page_header="Students",
+                           data=results)
+
+
 @app.route('/newTables')
 def newTables():
     db.create_all()
@@ -67,8 +80,12 @@ def newTables():
 @app.route('/adddata')
 def addData():
     # create some dummy data
-    s1 = Student(sId=25, sName="Bob", lineId="e109bs")
-    db.session.add(s1)
+    s1 = Student(sId=1, sName="Bob", lineId="e109bs")
+    s2 = Student(sId=2, sName="Alice", lineId="a983g")
+    s3 = Student(sId=3, sName="Charlie", lineId="f027k")
+    s4 = Student(sId=4, sName="Dylan", lineId="m410p")
+    students = [s1, s2, s3, s4]
+    db.session.add_all(students)
     a1 = Assignment(aId=2, prompt="go to the store")
     h1 = Homework(aId=2, sId=25, file="/uploaded/zzz.wav")
     entries = [a1, h1]
