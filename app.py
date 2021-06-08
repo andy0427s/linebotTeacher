@@ -28,7 +28,7 @@ class Student(db.Model):
 class Homework(db.Model):
     __tablename__ = 'homework'
     aId = db.Column(db.Integer, nullable=False)
-    sId = db.Column(db.Integer, unique=True, nullable=False)
+    sId = db.Column(db.Integer, nullable=False)
     file = db.Column(db.String(50), primary_key=True)
     submit_time = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
@@ -62,6 +62,30 @@ def newTables():
     db.create_all()
     print("created Tables")
     return "created"
+
+
+@app.route('/adddata')
+def addData():
+    # create some dummy data
+    s1 = Student(sId=25, sName="Bob", lineId="e109bs")
+    db.session.add(s1)
+    a1 = Assignment(aId=2, prompt="go to the store")
+    h1 = Homework(aId=2, sId=25, file="/uploaded/zzz.wav")
+    entries = [a1, h1]
+    db.session.add_all(entries)
+    db.session.commit()
+    return "added"
+
+
+@app.route('/clear')
+def clearData():
+    # for troubleshooting - this clears all data!
+    db.session.query(Student).delete()
+    db.session.query(Homework).delete()
+    db.session.query(Assignment).delete()
+    db.session.commit()
+
+    return "tables cleared"
 
 
 if __name__ == "__main__":
