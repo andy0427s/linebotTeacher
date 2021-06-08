@@ -1,3 +1,3 @@
-worker: gunicorn Linebot:app
+web: gunicorn Linebot:app
 web: gunicorn app:app
 
