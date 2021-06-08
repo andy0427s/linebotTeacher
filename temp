@@ -1,1 +1,5 @@
 web: gunicorn app:app
+
+line_bot_api = LineBotApi(
+    'ac7ZE3PtwfMiF3nV8sWMSyQOKXi0Sx5falS38l3J2JqbCDULsyF6AkoWw+aKcXbeuksGpqzTpMr/66jyX7f4T3QGRTvYoM+vqLy/rOYzR/Hye8cOpv70YpFFR03iYg7YD3fp3Ya80+uQ7BNQDFniXgdB04t89/1O/w1cDnyilFU=')
+handler = WebhookHandler('909fded566df6c5fe5b10a802f39a356')

@@ -29,6 +29,18 @@ def index():
     return render_template('index.html',
                            page_header="Home")
 
+
+@app.route('/create')
+def create():
+    return render_template('create.html',
+                           page_header="Create")
+
+
+@app.route('/review')
+def review():
+    return render_template('review.html',
+                           page_header="Review")
+
 # Linebot part
 
 
