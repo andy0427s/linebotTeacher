@@ -23,21 +23,7 @@ line_bot_api = LineBotApi(os.environ.get("CHANNEL_ACCESS_TOKEN"))
 handler = WebhookHandler(os.environ.get("CHANNEL_SECRET"))
 
 
-# 瀏覽器介面for Teacher to review (if needed)
-
-@app.route('/rec', methods=['GET', 'POST'])
-def get_file():
-    if request.method == "GET":
-        return "Hello Teacher Andy"
-        # return render_template('file.html', page_header="upload hand write picture")
-
-    # elif request.method == "POST":
-    #     file = request.files['file']
-    #     if file:
-    #         filename = str(uuid.uuid4())+"_"+file.filename
-    #         file.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
-    #         predict = model.recog_digit(filename)
-    #     return render_template('recog_result.html', page_header="hand writing digit recognition", predict = predict, src = url_for('static', filename=f'uploaded/{filename}'))
+# 瀏覽器介面for Teacher to review database ()
 
 
 # Linebot part 
@@ -73,6 +59,6 @@ def handle_message(event):
 
 
 
-# Run app on Heroku
+# Run app on Heroku server
 if __name__ == "__main__":
     app.run(debug=True)
