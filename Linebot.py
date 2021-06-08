@@ -3,7 +3,7 @@
 import os
 from datetime import datetime
 
-from flask import Flask, abort, request
+from flask import Flask, render_template, abort, request
 
 # https://github.com/line/line-bot-sdk-python
 from linebot import LineBotApi, WebhookHandler
@@ -24,8 +24,13 @@ handler = WebhookHandler(os.environ.get("CHANNEL_SECRET"))
 
 # 瀏覽器介面for Teacher to review database (GiAI)
 
+@app.route('/')
+def index():
+    return render_template('index.html',
+                           page_header="Home")
 
 # Linebot part
+
 
 @app.route("/callback", methods=["GET", "POST"])
 def callback():
