@@ -24,6 +24,9 @@ handler = WebhookHandler(os.environ.get("CHANNEL_SECRET"))
 
 # 瀏覽器介面for Teacher to review database (GiAI)
 
+
+######
+# temporary - will need to copy carry over functions from app.py when finished
 @app.route('/')
 def index():
     return render_template('index.html',
@@ -40,6 +43,8 @@ def create():
 def review():
     return render_template('review.html',
                            page_header="Review")
+#####
+
 
 # Linebot part
 
