@@ -28,14 +28,16 @@ handler = WebhookHandler(os.environ.get("CHANNEL_SECRET"))
 @app.route('/rec', methods=['GET', 'POST'])
 def get_file():
     if request.method == "GET":
-        return render_template('file.html', page_header="upload hand write picture")
-    elif request.method == "POST":
-        file = request.files['file']
-        if file:
-            filename = str(uuid.uuid4())+"_"+file.filename
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
-            predict = model.recog_digit(filename)
-        return render_template('recog_result.html', page_header="hand writing digit recognition", predict = predict, src = url_for('static', filename=f'uploaded/{filename}'))
+        return "Hello Teacher Andy"
+        # return render_template('file.html', page_header="upload hand write picture")
+
+    # elif request.method == "POST":
+    #     file = request.files['file']
+    #     if file:
+    #         filename = str(uuid.uuid4())+"_"+file.filename
+    #         file.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
+    #         predict = model.recog_digit(filename)
+    #     return render_template('recog_result.html', page_header="hand writing digit recognition", predict = predict, src = url_for('static', filename=f'uploaded/{filename}'))
 
 
 # Linebot part 
