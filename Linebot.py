@@ -89,8 +89,13 @@ handler = WebhookHandler(os.environ.get("CHANNEL_SECRET"))
 def callback():
 
     if request.method == "GET":
-        return "Hello Heroku"
-    if request.method == "POST":
+        # return "Hello Heroku"
+        return render_template(('index.html',
+                           page_header="page_header",
+                           current_time=datetime.utcnow()))
+
+
+    elif request.method == "POST":
         signature = request.headers["X-Line-Signature"]
         body = request.get_data(as_text=True)
 
