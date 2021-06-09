@@ -1,6 +1,6 @@
 # Linebot Oral English Teacher
 
-![image](https://github.com/TheSodacan/linebotTeacher/blob/main/imgs/Workflow.png)
+![image](https://github.com/TheSodacan/linebotTeacher/blob/main/imgs/Workflow2.png)
 
 
 工作日誌
