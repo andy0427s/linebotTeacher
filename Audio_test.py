@@ -12,7 +12,7 @@ from linebot.models import (
     LocationSendMessage, ImageSendMessage, StickerSendMessage
 )
 
-import (string, random)
+import (string, random, time, os)
 import azure.cognitiveservices.speech as speechsdk
 
 
@@ -66,16 +66,17 @@ def callback():
 @handler.add(MessageEvent, message=AudioMessage)
 def handle_audio(event):
 
-    audio_name = ''.join(random.choice(string.ascii_letters + string.digits) for x in range(4))
+    now = time.strftime("%Y-%m-%d-%H-%M",time.localtime(time.time()))
+    audio_name = '_recording_hw'
     audio_content = line_bot_api.get_message_content(event.message.id)
-    audio_name = audio_name.upper()+'.mp3'
-    path='./static/'+audio_name
+    audio_name = now+audio_name+'.mp3'
+    path='./recording/'+audio_name
 
     with open(path, 'wb') as fd:
         for chunk in audio_content.iter_content():
             fd.write(chunk)
-    
 
+'''
 # run app
 if __name__ == "__main__":
     app.run(host='127.0.0.1', port=12345)
