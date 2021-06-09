@@ -27,7 +27,7 @@ import speech_recognition as sr
 
 # LINE 聊天機器人的基本資料
 
-app = Flask(__name__)
+# app = Flask(__name__)
 
 line_bot_api = LineBotApi(os.environ.get("CHANNEL_ACCESS_TOKEN"))
 handler = WebhookHandler(os.environ.get("CHANNEL_SECRET"))
