@@ -108,9 +108,18 @@ def addData():
     db.session.commit()
     return "added"
 
+@app.route('/makechange')
+def makechange():
+    #make changes to table
+    return render_template('my-form.html')
 
 
+@app.route('/makechange', methods=['POST'])
+def makechange_post():
+    # a = request.form["Student_ID"]
+    # b = request.form["Student_Name"]
+    # c = request.form["Line_ID"]
+    return "123"
 
-
-# if __name__ == "__main__":
-#     app.run(debug=True)
+if __name__ == "__main__":
+    app.run(debug=True)

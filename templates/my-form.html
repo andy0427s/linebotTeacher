@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<style>
+input[type=text], select {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input[type=submit] {
+  width: 100%;
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type=submit]:hover {
+  background-color: #45a049;
+}
+
+div {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+</style>
+<body>
+
+    <h3>Make Changes To Data Here!</h3>
+
+    <div>
+        <!-- <form action="/action_page.php"> -->
+        <label for="table">Table Name</label>
+        <select id="table" name="table">
+          <option value="students">Students</option>
+          <option value="homeworks">Homeworks</option>
+          <option value="assignments">Assignments</option>
+        </select>
+
+        <label for="fname">Student ID</label>
+        <input type="text" id="fname" name="Student_ID" placeholder="Student ID..">
+
+        <label for="lname">Student Name</label>
+        <input type="text" id="lname" name="Student_Name" placeholder="Student Name..">
+
+        <label for="lname">LINE ID</label>
+        <input type="text" id="lname" name="Line_ID" placeholder="LINE ID..">
+
+
+
+        <input type="submit" value="Submit">
+      </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script>//By Johnson, 想做出互動式的欄位, 未完成
+
+        // let data_col = [
+        //     ["Student ID","Student Name","LINE ID"],
+        //     [],
+        //     []
+        // ];
+        $('#table').change(function () {
+            console.log($(this).val());});
+
+
+
+            // const nowCity = $(this).val();
+            // const districtValue = districtArray[nowCity];
+            // console.log('districtValue', districtValue);
+
+
+        // $('#district option').each(function () {
+        //     $(this).text(districtValue[$(this).val()]);
+        // });
+
+    </script>
+</body>
+</html>
