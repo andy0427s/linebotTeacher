@@ -12,8 +12,10 @@ from linebot.models import (
     LocationSendMessage, ImageSendMessage, StickerSendMessage
 )
 
-import string
-import random
+import (string, random)
+import azure.cognitiveservices.speech as speechsdk
+
+
 
 # create flask server
 app = Flask(__name__)
@@ -74,16 +76,35 @@ def handle_audio(event):
             fd.write(chunk)
     
 
-    
-    # os.system('ffmpeg -y -i ' + name_mp3 + ' ' + name_wav + ' -loglevel quiet')
-    # text = transcribe(name_wav)
-    # print('Transcribe:', text)
-    # line_bot_api.reply_message(event.reply_token, TextSendMessage(text = text))
-
-
-
-
-
 # run app
 if __name__ == "__main__":
     app.run(host='127.0.0.1', port=12345)
+
+speech_key, service_region = "c6d717109b46431e9ae8f4be76592b0f", "southcentralus"
+speech_config = speechsdk.SpeechConfig(subscription=speech_key, region=service_region)
+
+# Creates an audio configuration that points to an audio file.
+# Replace with your own audio filename.
+audio_filename = "narration.wav"
+audio_input = speechsdk.audio.AudioConfig(filename=audio_filename)
+
+# Creates a recognizer with the given settings
+speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config, audio_config=audio_input)
+
+print("Recognizing first result...")
+
+esult = speech_recognizer.recognize_once()
+
+# Checks result.
+if result.reason == speechsdk.ResultReason.RecognizedSpeech:
+    print("Recognized: {}".format(result.text))
+elif result.reason == speechsdk.ResultReason.NoMatch:
+    print("No speech could be recognized: {}".format(result.no_match_details))
+elif result.reason == speechsdk.ResultReason.Canceled:
+    cancellation_details = result.cancellation_details
+    print("Speech Recognition canceled: {}".format(cancellation_details.reason))
+    if cancellation_details.reason == speechsdk.CancellationReason.Error:
+        print("Error details: {}".format(cancellation_details.error_details))
+
+
+
