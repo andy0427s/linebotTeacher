@@ -113,10 +113,10 @@ def addHomework(aId, lineId, file):
     db.session.add(entry)
     db.session.commit()
 
-# @app.route('/addtest')
-# def addTest():
-#     addHomework(22, "a983g", "/uploaded/sss.wav")
-#     return "added!"
+@app.route('/addtest')
+def addTest():
+    addHomework(22, "a983g", "/uploaded/sss.wav")
+    return "added!"
 
 
 
