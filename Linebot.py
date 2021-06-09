@@ -10,6 +10,10 @@ from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
+# Audio recongnition
+import speech_recognition as sr
+
+
 
 # import for database (SQLalchemy)
 
@@ -76,6 +80,10 @@ def handle_message(event):
     # Send To Line
     reply = TextSendMessage(text=f"{get_message}")
     line_bot_api.reply_message(event.reply_token, reply)
+
+
+
+
 
 
 # Run app on Heroku server
