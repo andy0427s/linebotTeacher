@@ -2,7 +2,6 @@ from flask import Flask, render_template, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
-
 # main goal:
 # provide a platform for teachers to interact with a SQL database containing student assignments
 # allow teachers to give new assignments
@@ -33,12 +32,14 @@ class Homework(db.Model):
     sId = db.Column(db.Integer, nullable=False)
     file = db.Column(db.String(50), primary_key=True)
     submit_time = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    # result from Azure
+    label = db.Column(db.String(100))
 
 
 class Assignment(db.Model):
     __tablename__ = 'assignment'
     aId = db.Column(db.Integer, primary_key=True)
-    prompt = db.Column(db.String(80))
+    prompt = db.Column(db.String(100))
 
 
 @app.route('/')
@@ -68,12 +69,27 @@ def students():
                            page_header="Students",
                            data=results)
 
+@app.route('/showtables')
+# show all tables
+def showTables():
+    results = {}
+    results['students'] =  Student.query.all()
+    results['homeworks'] = Homework.query.all()
+    results['assignments'] = Assignment.query.all()
+    return render_template('showtables.html',
+                           page_header="All tables",
+                           data=results)
 
-@app.route('/newTables')
+@app.route('/createall')
 def newTables():
     db.create_all()
-    print("created Tables")
     return "created"
+
+@app.route('/dropall')
+def clearData():
+    # this drops all tables (not just rows)
+    db.drop_all()
+    return "tables dropped"
 
 
 @app.route('/adddata')
@@ -93,16 +109,8 @@ def addData():
     return "added"
 
 
-@app.route('/clear')
-def clearData():
-    # for troubleshooting - this clears all data!
-    db.session.query(Student).delete()
-    db.session.query(Homework).delete()
-    db.session.query(Assignment).delete()
-    db.session.commit()
-
-    return "tables cleared"
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
+
+# if __name__ == "__main__":
+#     app.run(debug=True)

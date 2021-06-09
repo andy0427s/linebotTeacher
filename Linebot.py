@@ -1,10 +1,11 @@
 # 匯入所需模組
 
+
 import os
 from datetime import datetime
 
 from flask import Flask, render_template, abort, request
-
+from app import app, db, Student, Homework, Assignment
 # https://github.com/line/line-bot-sdk-python
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
@@ -20,7 +21,7 @@ import speech_recognition as sr
 
 # LINE 聊天機器人的基本資料
 
-app = Flask(__name__)
+# app = Flask(__name__)
 
 line_bot_api = LineBotApi(os.environ.get("CHANNEL_ACCESS_TOKEN"))
 handler = WebhookHandler(os.environ.get("CHANNEL_SECRET"))
@@ -30,23 +31,14 @@ handler = WebhookHandler(os.environ.get("CHANNEL_SECRET"))
 
 
 ######
-# temporary - will need to copy carry over functions from app.py when finished
-@app.route('/')
-def index():
-    return render_template('index.html',
-                           page_header="Home")
-
-
-@app.route('/create')
-def create():
-    return render_template('create.html',
-                           page_header="Create")
-
-
-@app.route('/review')
-def review():
-    return render_template('review.html',
-                           page_header="Review")
+# testing if db changes can work from here
+@app.route('/addone')
+def addOne():
+    # add one student
+    s1 = Student(sId=99, sName="lineman", lineId="f814h")
+    db.session.add(s1)
+    db.session.commit()
+    return "success!"
 #####
 
 
