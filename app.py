@@ -2,7 +2,6 @@ from flask import Flask, render_template, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
-
 # main goal:
 # provide a platform for teachers to interact with a SQL database containing student assignments
 # allow teachers to give new assignments
@@ -104,5 +103,5 @@ def clearData():
     return "tables cleared"
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
+# if __name__ == "__main__":
+#     app.run(debug=True)
