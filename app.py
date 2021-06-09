@@ -29,7 +29,7 @@ class Student(db.Model):
 class Homework(db.Model):
     __tablename__ = 'homework'
     aId = db.Column(db.Integer, nullable=False)
-    sId = db.Column(db.Integer, nullable=False)
+    lineId = db.Column(db.Integer, nullable=False)
     file = db.Column(db.String(50), primary_key=True)
     submit_time = db.Column(db.DateTime, nullable=False, default=datetime.now)
     # result from Azure
@@ -102,13 +102,21 @@ def addData():
     students = [s1, s2, s3, s4]
     db.session.add_all(students)
     a1 = Assignment(aId=2, prompt="go to the store")
-    h1 = Homework(aId=2, sId=25, file="/uploaded/zzz.wav")
+    h1 = Homework(aId=2, lineId='f027k', file="/uploaded/zzz.wav")
     entries = [a1, h1]
     db.session.add_all(entries)
     db.session.commit()
     return "added"
 
+def addHomework(aId, lineId, file):
+    entry = Homework(aId=aId, lineId=lineId, file=file)
+    db.session.add(entry)
+    db.session.commit()
 
+# @app.route('/addtest')
+# def addTest():
+#     addHomework(22, "a983g", "/uploaded/sss.wav")
+#     return "added!"
 
 
 

@@ -37,7 +37,7 @@
     <thead>
         <tr>
             <th>Assignment ID</th>
-            <th>Student ID</th>
+            <th>LINE ID</th>
             <th>File location</th>
             <th>Submit time</th>
             <th>Label</th>
@@ -47,7 +47,7 @@
         {% for row in data['homeworks'] %}
         <tr>
             <td>{{ row['aId'] }}</td>
-            <td>{{ row['sId'] }}</td>
+            <td>{{ row['lineId'] }}</td>
             <td>{{ row['file'] }}</td>
             <td>{{ row['submit_time'] }}</td>
             <td>{{ row['label'] }}</td>
