@@ -1,6 +1,6 @@
 # 匯入所需模組
 
-import os
+import os, time, string
 from datetime import datetime
 
 from flask import Flask, render_template, abort, request
@@ -14,8 +14,6 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage, AudioMessage,
     LocationSendMessage, ImageSendMessage, StickerSendMessage
 )
-import string
-import random
 
 # Audio recongnition
 import speech_recognition as sr
@@ -80,15 +78,17 @@ def handle_message(event):
     line_bot_api.reply_message(event.reply_token, reply)
 
 
-# Line錄音回傳功能 / 回傳mp3音檔至本機端
+# Line錄音回傳功能 / 回傳mp3音檔至本機端 
+# 按照時間順序新增檔名
 
 @handler.add(MessageEvent, message=AudioMessage)
 def handle_audio(event):
 
-    audio_name = ''.join(random.choice(string.ascii_letters + string.digits) for x in range(4))
+    now = time.strftime("%Y-%m-%d-%H-%M",time.localtime(time.time()))
+    audio_name = '_recording_hw'
     audio_content = line_bot_api.get_message_content(event.message.id)
-    audio_name = audio_name.upper()+'.mp3'
-    path='./static/'+audio_name
+    audio_name = now+audio_name+'.mp3'
+    path='./recording/'+audio_name
 
     with open(path, 'wb') as fd:
         for chunk in audio_content.iter_content():
