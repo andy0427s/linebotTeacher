@@ -1,6 +1,5 @@
 # 匯入所需模組
 
-
 import os
 from datetime import datetime
 
@@ -9,7 +8,14 @@ from app import app, db, Student, Homework, Assignment
 # https://github.com/line/line-bot-sdk-python
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, TextMessage, TextSendMessage
+
+# Audio file handing
+from linebot.models import (
+    MessageEvent, TextMessage, TextSendMessage, AudioMessage,
+    LocationSendMessage, ImageSendMessage, StickerSendMessage
+)
+import string
+import random
 
 # Audio recongnition
 import speech_recognition as sr
@@ -42,7 +48,7 @@ def addOne():
 #####
 
 
-# Linebot part
+# Linebot 基本設定
 
 
 @app.route("/callback", methods=["GET", "POST"])
@@ -74,9 +80,20 @@ def handle_message(event):
     line_bot_api.reply_message(event.reply_token, reply)
 
 
+# Line錄音回傳功能 / 回傳mp3音檔至本機端
 
+@handler.add(MessageEvent, message=AudioMessage)
+def handle_audio(event):
 
+    audio_name = ''.join(random.choice(string.ascii_letters + string.digits) for x in range(4))
+    audio_content = line_bot_api.get_message_content(event.message.id)
+    audio_name = audio_name.upper()+'.mp3'
+    path='./static/'+audio_name
 
+    with open(path, 'wb') as fd:
+        for chunk in audio_content.iter_content():
+            fd.write(chunk)
+    
 
 # Run app on Heroku server
 if __name__ == "__main__":
