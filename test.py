@@ -5,6 +5,8 @@ import uuid
 
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient, __version__
 setx AZURE_STORAGE_CONNECTION_STRING "DefaultEndpointsProtocol=https;AccountName=teaxherbot;AccountKey=SlBVZJ3SJVv9Bfz39+uByCNHUdonRGGQb0cYcjjowz26I0y0yp0TYor6L4tQb9zrHSljUJKfkzzBdMbWtfwe/w==;EndpointSuffix=core.windows.net"
+setx AZURE_STORAGE_CONNECTION_STRING 'DefaultEndpointsProtocol=https;AccountName=teaxherbot;AccountKey=SlBVZJ3SJVv9Bfz39+uByCNHUdonRGGQb0cYcjjowz26I0y0yp0TYor6L4tQb9zrHSljUJKfkzzBdMbWtfwe/w==;EndpointSuffix=core.windows.net'
+
 try:
     print("Azure Blob Storage v" + __version__ + " - Python quickstart sample")
 
