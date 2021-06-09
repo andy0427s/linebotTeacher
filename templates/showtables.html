@@ -1,0 +1,84 @@
+{% extends "parts/base.html" %}
+
+{% block title %}review{% endblock title %}
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='jquery/jquery-3.5.1.min.js') }}"></script>
+{% endblock scripts %}
+
+{% block page_content %}
+{{ super() }}
+
+<h3>Students</h3>
+<table class="table table-light table-bordered">
+    <thead>
+        <tr>
+            <th>Student ID</th>
+            <th>Student Name</th>
+            <th>LINE ID</th>
+        </tr>
+    <tbody>
+
+        {% for row in data['students'] %}
+        <tr>
+            <td>{{ row['sId'] }}</td>
+            <td>{{ row['sName'] }}</td>
+            <td>{{ row['lineId'] }}</td>
+        </tr>
+        {% endfor %}
+
+    </tbody>
+    </thead>
+
+</table>
+
+<h3>Homeworks</h3>
+<table class="table table-light table-bordered">
+    <thead>
+        <tr>
+            <th>Assignment ID</th>
+            <th>Student ID</th>
+            <th>File location</th>
+            <th>Submit time</th>
+            <th>Label</th>
+        </tr>
+    <tbody>
+
+        {% for row in data['homeworks'] %}
+        <tr>
+            <td>{{ row['aId'] }}</td>
+            <td>{{ row['sId'] }}</td>
+            <td>{{ row['file'] }}</td>
+            <td>{{ row['submit_time'] }}</td>
+            <td>{{ row['label'] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </thead>
+</table>
+
+<h3>Assignments</h3>
+<table class="table table-light table-bordered">
+    <thead>
+        <tr>
+            <th>Assignment ID</th>
+            <th>Prompt</th>
+        </tr>
+    <tbody>
+
+        {% for row in data['assignments'] %}
+        <tr>
+            <td>{{ row['aId'] }}</td>
+            <td>{{ row['prompt'] }}</td>
+        </tr>
+        {% endfor %}
+
+    </tbody>
+    </thead>
+
+</table>
+
+
+
+
+{% endblock page_content %}
