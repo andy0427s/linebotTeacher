@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<style>
+input[type=text], select {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input[type=submit] {
+  width: 100%;
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type=submit]:hover {
+  background-color: #45a049;
+}
+
+div {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+</style>
+<body>
+<script src="https://code.jquery.com/jquery-3.6.0.js"
+    integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+
+
+<form method = "POST">
+
+    <h3>Make Changes To Data Here!</h3>
+
+    <div>
+        <!-- <form action="/action_page.php"> -->
+        <label for="table">Table Name</label>
+        <select id="table" name="table">
+          <option value="students">Students</option>
+          <option value="homeworks">Homeworks</option>
+          <option value="assignments">Assignments</option>
+        </select>
+        
+        <div class="scol">
+          <label for="sID">Student ID</label>
+          <input type="text" id="sID" name="sID" placeholder="Student ID..">
+
+          <label for="SName">Student Name</label>
+          <input type="text" id="SName" name="SName" placeholder="Student Name..">
+
+          <label for="LID">LINE ID</label>
+          <input type="text" id="LID" name="LID" placeholder="LINE ID..">
+        </div>
+
+        <div class="hcol" style = "display:none;">
+          <label for="aID">Assignment ID</label>
+          <input type="text" id="aID" name="aID" placeholder="Assignment ID..">
+
+          <label for="sID2">Student ID</label>
+          <input type="text" id="sID2" name="sID2" placeholder="Student ID..">
+
+          <label for="fLoc">File Location</label>
+          <input type="text" id="fLoc" name="fLoc" placeholder="File Location..">
+
+<!--          <label for="sTime">Submit Time</label>-->
+<!--          <input type="text" id="sTime" name="sTime" placeholder="Submit Time..">-->
+
+          <label for="Lab">Label</label>
+          <input type="text" id="Lab" name="Lab" placeholder="Label..">
+        </div>
+
+        <div class="acol" style = "display:none;">
+          <label for="aID2">Assignment ID</label>
+          <input type="text" id="aID2" name="aID2" placeholder="Assignment ID..">q:
+
+          <label for="pmt">Prompt</label>
+          <input type="text" id="pmt" name="pmt" placeholder="Prompt..">
+        </div>
+
+        <input type="submit" value="Submit">
+      </form>
+    </div>
+
+    <script>
+        $('#table').change(function () {
+            console.log($(this).val());
+            var val = $(this).val();
+            if (val === "students"){
+              $(".scol").show();
+              $(".hcol").hide();
+              $(".acol").hide();
+            }
+            if (val === "homeworks"){
+              $(".scol").hide();
+              $(".hcol").show();
+              $(".acol").hide();
+            }
+            if (val === "assignments"){
+              $(".scol").hide();
+              $(".hcol").hide();
+              $(".acol").show();
+            }
+          });
+      
+          
+    </script>
+</form>
+</body>
+</html>

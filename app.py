@@ -30,7 +30,7 @@ class Student(db.Model):
     lineId = db.Column(db.String(30), unique=True, nullable=False)
 
     def __repr__(self):
-        return f'<Student ID: {self.sId}, Name: {self.sName}, LINE: {self.lineId}>'
+        return f'[Student ID: {self.sId}, Name: {self.sName}, LINE: {self.lineId}]'
 
 
 class Homework(db.Model):
@@ -54,11 +54,43 @@ def index():
     return render_template('index.html',
                            page_header="Home")
 
-
 @app.route('/create')
 def create():
     return render_template('create.html',
                            page_header="Create")
+
+@app.route('/makechange')
+def makechange():
+    #make changes to table
+    return render_template('my-form.html')
+
+
+@app.route('/makechange', methods=['POST'])
+def makechange_post():
+    tab_type = request.form['table']
+    if tab_type == "students":
+        sid = request.form['sID']
+        sname = request.form['SName']
+        lineid = request.form['LID']
+        student = [Student(sId=sid, sName=sname, lineId=lineid)]
+        db.session.add_all(student)
+        msg = "Added data to students"
+    elif tab_type == "homeworks":
+        aid = request.form['aID']
+        aaa = request.form['sID2']
+        floc = request.form['fLoc']
+        lab = request.form['Lab']
+        homework = [Homework(aId=aid, sId=aaa, file=floc, label=lab)]
+        db.session.add_all(homework)
+        msg = "Added data to homeworks"
+    elif tab_type == "assignments":
+        aid = request.form['aID2']
+        pmt = request.form['pmt']
+        assignment = [Assignment(aId=aid, prompt=pmt)]
+        db.session.add_all(assignment)
+        msg = "Added data to assignments"
+    db.session.commit()
+    return msg
 
 
 @app.route('/review')
@@ -116,6 +148,8 @@ def addData():
     return "added"
 
 
+<<<<<<< HEAD
+=======
 # below are test URLs once again, will delete at a later point
 @app.route('/addstu')
 def addStu():
@@ -163,7 +197,7 @@ def addHomework(aId, lineId, file):
         return f"failed to add {file}"
 
 def addAssignment(prompt):
-    # this shouldn't ever error to no need to try/except
+    # this shouldn't ever error so no need to try/except
     entry = Assignment(prompt=prompt)
     db.session.add(entry)
     db.session.commit()
@@ -199,7 +233,31 @@ def deleteAssignment(aId):
         db.session.rollback()
         return f"failed to delete assignment {aId}"
 
+def updateStudent(sId, newId=None, newName=None, newLineId=None):
+    query = Student.query.get(sId)
+    olddata = query.__repr__()
+    if query:
+        if newId:
+            query.sId = newId
+        if newName:
+            query.sName = newName
+        if newLineId:
+            query.lineId = newLineId
+        try:
+            db.session.commit()
+            newdata = query.__repr__()
+            return f"updated {olddata} to {newdata}"
+        except:
+            db.session.rollback()
+            return f"failed to update {olddata}"
+    else:
+        return f"failed to find student {sId}"
 
+@app.route('/updatestu')
+def updateStu():
+    return updateStudent(1, newId=1,newName="Jim", newLineId="d848e")
+    # return updateStudent(1, newName="Jones")
+>>>>>>> c905e482759c5cd85cf85a32ca94c391e1375d79
 
-# if __name__ == "__main__":
-#     app.run(debug=True)
+if __name__ == "__main__":
+    app.run(debug=True)
