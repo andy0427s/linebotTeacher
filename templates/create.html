@@ -1,14 +1,98 @@
 {% extends "parts/base.html" %}
 
-{% block title %}review{% endblock title %}
+{% block title %}Create{% endblock title %}
 {% block scripts %}
 {{ super() }}
-<script src="{{ url_for('static', filename='jquery/jquery-3.5.1.min.js') }}"></script>
+
 {% endblock scripts %}
 
 {% block page_content %}
 {{ super() }}
-<p>Create Assignment</p>
+
+<body>
+
+    <form id="createForm" method="POST">
+        <div>
+            <label for="table" class="form-label">Table Name</label>
+            <select class="form-select" id="table" name="table">
+                <option value="students">Students</option>
+                <option value="homeworks">Homeworks</option>
+                <option value="assignments">Assignments</option>
+            </select>
+
+            <div class="scol">
+                <div class="mb-3">
+                    <label for="sID" class="form-label">Student ID</label>
+                    <input type="text" class="form-control" id="sID" name="sID" placeholder="Student ID.." required>
+                </div>
+                <div class="mb-3">
+                    <label for="SName" class="form-label">Student Name</label>
+                    <input type="text" class="form-control" id="SName" name="SName" placeholder="Student Name.."
+                        required>
+                </div>
+                <div class="mb-3">
+                    <label for="LID" class="form-label">LINE ID</label>
+                    <input type="text" class="form-control" id="LID" name="LID" placeholder="LINE ID.." required>
+                </div>
+            </div>
+
+            <div class="hcol" style="display:none;">
+                <div class="mb-3">
+                    <label for="aID" class="form-label">Assignment ID</label>
+                    <input type="text" class="form-control" id="aID" name="aID" placeholder="Assignment ID.." required>
+                </div>
+                <div class="mb-3">
+                    <label for="sID2" class="form-label">Student ID</label>
+                    <input type="text" class="form-control" id="sID2" name="sID2" placeholder="Student ID.." required>
+                </div>
+                <div class="mb-3">
+                    <label for="fLoc" class="form-label">File Location</label>
+                    <input type="text" class="form-control" id="fLoc" name="fLoc" placeholder="File Location.."
+                        required>
+                </div>
+                <div class="mb-3">
+                    <label for="Lab" class="form-label">Label</label>
+                    <input type="text" class="form-control" id="Lab" name="Lab" placeholder="Label..">
+                </div>
+            </div>
+
+            <div class="acol" style="display:none;">
+                <div class="mb-3">
+                    <label for="pmt" class="form-label">Prompt</label>
+                    <input type="text" class="form-control" id="pmt" name="pmt" placeholder="Prompt.." required>
+                </div>
+            </div>
+
+            <input class="btn btn-primary" type="submit" value="Submit">
+    </form>
+    </div>
+
+    <script>
+        $('input:text').prop('disabled', true);
+        $(".scol input").prop('disabled', false);
+        $('#table').change(function () {
+            // console.log($(this).val());
+            var val = $(this).val();
+            if (val === "students") {
+                $(".scol").show().find('input').prop('disabled', false);
+                $(".hcol").hide().find('input').prop('disabled', true);
+                $(".acol").hide().find('input').prop('disabled', true);
+            }
+            if (val === "homeworks") {
+                $(".scol").hide().find('input').prop('disabled', true);
+                $(".hcol").show().find('input').prop('disabled', false);
+                $(".acol").hide().find('input').prop('disabled', true);
+            }
+            if (val === "assignments") {
+                $(".scol").hide().find('input').prop('disabled', true);
+                $(".hcol").hide().find('input').prop('disabled', true);
+                $(".acol").show().find('input').prop('disabled', false);
+            }
+        });
 
 
-{% endblock page_content %}
+
+    </script>
+    </form>
+
+    {% endblock page_content %}

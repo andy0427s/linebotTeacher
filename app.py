@@ -54,14 +54,40 @@ def index():
     return render_template('index.html',
                            page_header="Home")
 
-@app.route('/create')
+
+@app.route('/create', methods=['GET', 'POST'])
 def create():
+    if request.form:
+        print(request.form)
+        tab_type = request.form['table']
+        if tab_type == "students":
+            sid = request.form['sID']
+            sname = request.form['SName']
+            lineid = request.form['LID']
+            student = [Student(sId=sid, sName=sname, lineId=lineid)]
+            db.session.add_all(student)
+            msg = "Added data to students"
+        elif tab_type == "homeworks":
+            aid = request.form['aID']
+            aaa = request.form['sID2']
+            floc = request.form['fLoc']
+            lab = request.form['Lab']
+            homework = [Homework(aId=aid, sId=aaa, file=floc, label=lab)]
+            db.session.add_all(homework)
+            msg = "Added data to homeworks"
+        elif tab_type == "assignments":
+            pmt = request.form['pmt']
+            assignment = [Assignment(prompt=pmt)]
+            db.session.add_all(assignment)
+            msg = "Added data to assignments"
+        db.session.commit()
     return render_template('create.html',
-                           page_header="Create")
+                           page_header="Add Data to Table")
+
 
 @app.route('/makechange')
 def makechange():
-    #make changes to table
+    # make changes to table
     return render_template('my-form.html')
 
 
@@ -108,21 +134,24 @@ def students():
                            page_header="Students",
                            data=results)
 
+
 @app.route('/showtables')
 # show all tables
 def showTables():
     results = {}
-    results['students'] =  Student.query.all()
+    results['students'] = Student.query.all()
     results['homeworks'] = Homework.query.all()
     results['assignments'] = Assignment.query.all()
     return render_template('showtables.html',
                            page_header="All tables",
                            data=results)
 
+
 @app.route('/createall')
 def newTables():
     db.create_all()
     return "created"
+
 
 @app.route('/dropall')
 def clearData():
@@ -147,6 +176,7 @@ def addData():
     db.session.commit()
     return "added"
 
+
 @app.route('/reset')
 def reset():
     db.drop_all()
@@ -159,7 +189,7 @@ def reset():
     a2 = Assignment(prompt="He finished his breakfast early")
     a3 = Assignment(prompt="The flowers bloomed early this year")
     h1 = Homework(aId=2, lineId='f027k', file="/uploaded/zzz.wav")
-    entries = [s1,s2,s3,s4,a1,a2,a3,h1]
+    entries = [s1, s2, s3, s4, a1, a2, a3, h1]
     db.session.add_all(entries)
     db.session.commit()
     return redirect('/showtables')
@@ -170,25 +200,31 @@ def reset():
 def addStu():
     return addStudent(22, "Eve", "o147v")
 
+
 @app.route('/addhw')
 def addHw():
     return addHomework(22, "a983g", "/uploaded/sss.wav", "mary")
+
 
 @app.route('/addass')
 def addAss():
     return addAssignment("He went to Spain")
 
+
 @app.route('/delstu')
 def delStu():
     return deleteStudent(2)
+
 
 @app.route('/delhw')
 def delHw():
     return deleteHomework("/uploaded/sss.wav")
 
+
 @app.route('/delass')
 def delAss():
     return deleteAssignment(2)
+
 
 def addStudent(sId, sName, lineId):
     entry = Student(sId=sId, sName=sName, lineId=lineId)
@@ -199,7 +235,7 @@ def addStudent(sId, sName, lineId):
     except:
         db.session.rollback()
         return f"failed to add {sName}"
-    
+
 
 def addHomework(aId, lineId, file, label=None):
     entry = Homework(aId=aId, lineId=lineId, file=file, label=label)
@@ -211,12 +247,14 @@ def addHomework(aId, lineId, file, label=None):
         db.session.rollback()
         return f"failed to add {file}"
 
+
 def addAssignment(prompt):
     # this shouldn't ever error so no need to try/except
     entry = Assignment(prompt=prompt)
     db.session.add(entry)
     db.session.commit()
     return f"added assignment {prompt}!"
+
 
 def deleteStudent(sId):
     query = Student.query.get(sId)
@@ -228,6 +266,7 @@ def deleteStudent(sId):
         db.session.rollback()
         return f"failed to delete student {sId}"
 
+
 def deleteHomework(file):
     query = Homework.query.get(file)
     try:
@@ -238,6 +277,7 @@ def deleteHomework(file):
         db.session.rollback()
         return f"failed to delete homework {file}"
 
+
 def deleteAssignment(aId):
     query = Assignment.query.get(aId)
     try:
@@ -247,6 +287,7 @@ def deleteAssignment(aId):
     except:
         db.session.rollback()
         return f"failed to delete assignment {aId}"
+
 
 def updateStudent(sId, newId=None, newName=None, newLineId=None):
     query = Student.query.get(sId)
@@ -268,10 +309,12 @@ def updateStudent(sId, newId=None, newName=None, newLineId=None):
     else:
         return f"failed to find student {sId}"
 
+
 @app.route('/updatestu')
 def updateStu():
-    return updateStudent(1, newId=1,newName="Jim", newLineId="d848e")
+    return updateStudent(1, newId=1, newName="Jim", newLineId="d848e")
     # return updateStudent(1, newName="Jones")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
