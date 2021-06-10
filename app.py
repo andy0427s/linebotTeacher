@@ -61,30 +61,27 @@ def create():
         print(request.form)
         tab_type = request.form['table']
         if tab_type == "students":
-            sid = request.form['sID']
-            sname = request.form['SName']
-            lineid = request.form['LID']
-            student = [Student(sId=sid, sName=sname, lineId=lineid)]
-            db.session.add_all(student)
-            msg = "Added data to students"
+            sId = request.form['s-sId']
+            sName = request.form['s-sName']
+            lineId = request.form['s-lineId']
+            message = addStudent(sId, sName, lineId)
         elif tab_type == "homeworks":
-            aid = request.form['aID']
-            aaa = request.form['sID2']
-            floc = request.form['fLoc']
-            lab = request.form['Lab']
-            homework = [Homework(aId=aid, sId=aaa, file=floc, label=lab)]
-            db.session.add_all(homework)
-            msg = "Added data to homeworks"
+            aId = request.form['h-aId']
+            lineId = request.form['h-sId']
+            file = request.form['h-file']
+            label = request.form['h-label']
+            message = addHomework(aId, lineId, file, label)
         elif tab_type == "assignments":
-            pmt = request.form['pmt']
-            assignment = [Assignment(prompt=pmt)]
-            db.session.add_all(assignment)
-            msg = "Added data to assignments"
-        db.session.commit()
+            prompt = request.form['a-prompt']
+            message = addAssignment(prompt)
+        return render_template('create.html',
+                               page_header="Add Data to Table",
+                               message=message)
     return render_template('create.html',
                            page_header="Add Data to Table")
 
 
+# /makechange now deprecated can be cleaned up
 @app.route('/makechange')
 def makechange():
     # make changes to table
@@ -231,10 +228,10 @@ def addStudent(sId, sName, lineId):
     try:
         db.session.add(entry)
         db.session.commit()
-        return f"added {sName}!"
+        return f"added student {sName}!"
     except:
         db.session.rollback()
-        return f"failed to add {sName}"
+        return f"failed to add student {sName}"
 
 
 def addHomework(aId, lineId, file, label=None):
@@ -242,10 +239,10 @@ def addHomework(aId, lineId, file, label=None):
     try:
         db.session.add(entry)
         db.session.commit()
-        return f"added{file}!"
+        return f"added homework {file}!"
     except:
         db.session.rollback()
-        return f"failed to add {file}"
+        return f"failed to add homework {file}"
 
 
 def addAssignment(prompt):
