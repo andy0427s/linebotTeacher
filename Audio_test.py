@@ -45,11 +45,13 @@ def callback():
         abort(400)
     return 'OK'
 
+
+# Google Audio Recognitioner 語音轉文字功能
 def transcribe(wav_path):
-    '''
-    Speech to Text by Google free API
-    language: en-US, zh-TW
-    '''
+    
+    # Speech to Text by Google free API
+    # language: en-US, zh-TW
+    
     
     r = sr.Recognizer()
     with sr.AudioFile(wav_path) as source:
@@ -73,8 +75,9 @@ def handle_audio(event):
     audio_content = line_bot_api.get_message_content(event.message.id)
     mp3file = now+audio_name+'.mp3'
     wavfile = now+audio_name+'.wav'
+    txtfile = now+audio_name+'.txt'
 
-
+    path_txt='./text/'+txtfile
     path='./recording/'+mp3file  # mp3 file path 
     path_wav='./recording_wav/'+wavfile # wav file path
 
@@ -86,33 +89,40 @@ def handle_audio(event):
     os.system('ffmpeg -y -i ' + path + ' ' + path_wav + ' -loglevel quiet')
 
 
-    # audio to txt converter  
-    text = transcribe(path_wav)
-    print('Transcribe:', text)
+    # audio to txt converter 
+    audio_filename = "./recording_wav/{now}{audio_name}.wav".format(now=now ,audio_name='_recording_hw')
+    text = transcribe(audio_filename)
+
+    # print('Transcribe:', text)
+
+    # LineBot respond function
     # line_bot_api.reply_message(event.reply_token, TextSendMessage(text = text))
 
-    # text output 
-    txtfile = now+audio_name+'.txt'
-    path_txt='./text/'+now+txtfile
 
-    with open(path_txt, 'w') as ft:
-        ft.write(text)
-        ft.close()
-
-# run app
-if __name__ == "__main__":
-    app.run(host='127.0.0.1', port=12345)
+    # Google speech recognition testing
+    if text == None:
+        print('Google did not understand the sound, please try again')
+    
+    else:
+        print('Successful Uploading')
+        with open(path_txt, 'w') as ft:
+            ft.write(text)
+            ft.close()
 
 
 # audio convert to text (Linebot)
     
-    # os.system('ffmpeg -y -i ' + audio_name_mp3 + ' ' + audio_name_wav + ' -loglevel quiet')
-    # text = transcribe(audio_name_wav)
-    # print('Transcribe:', text)
-    # line_bot_api.reply_message(event.reply_token, TextSendMessage(text = text))
+#     os.system('ffmpeg -y -i ' + audio_name_mp3 + ' ' + audio_name_wav + ' -loglevel quiet')
+#     text = transcribe(audio_name_wav)
+#     print('Transcribe:', text)
+#     line_bot_api.reply_message(event.reply_token, TextSendMessage(text = text))
+
+# run app
+if __name__ == "__main__":
+    app.run(host='127.0.0.1', port=12345)
+  
 
 '''
-
 import azure.cognitiveservices.speech as speechsdk
 
 # Creates an instance of a speech config with specified subscription key and service region.
@@ -122,14 +132,14 @@ speech_config = speechsdk.SpeechConfig(subscription=speech_key, region=service_r
 
 # Creates an audio configuration that points to an audio file.
 # Replace with your own audio filename.
-audio_filename = path
+audio_filename = './recording_wav/{now}+{audio_name}.wav'.format(now='time.strftime("%Y%m%d-%H%M",time.localtime(time.time()))', audio_name='_recording_hw')
 audio_input = speechsdk.audio.AudioConfig(filename=audio_filename)
 
 
 # Creates a recognizer with the given settings
 speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config, audio_config=audio_input)
 
-print("Recognizing first result...")
+# print("Recognizing first result...")
 
 # Starts speech recognition, and returns after a single utterance is recognized. The end of a
 # single utterance is determined by listening for silence at the end or until a maximum of 15
@@ -138,6 +148,16 @@ print("Recognizing first result...")
 # shot recognition like command or query. 
 # For long-running multi-utterance recognition, use start_continuous_recognition() instead.
 result = speech_recognizer.recognize_once()
+result_txt = result.text
+
+# text output 
+txtfile = now+audio_name+'.txt'
+path_txt='./text/'+txtfile
+
+with open(path_txt, 'w') as ft:
+    ft.write(result_txt)
+    ft.close()
+
 
 # Checks result.
 if result.reason == speechsdk.ResultReason.RecognizedSpeech:
@@ -151,5 +171,4 @@ elif result.reason == speechsdk.ResultReason.Canceled:
         print("Error details: {}".format(cancellation_details.error_details))
 '''
 
-  
 
