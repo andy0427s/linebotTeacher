@@ -47,11 +47,43 @@ def index():
     return render_template('index.html',
                            page_header="Home")
 
-
 @app.route('/create')
 def create():
     return render_template('create.html',
                            page_header="Create")
+
+@app.route('/makechange')
+def makechange():
+    #make changes to table
+    return render_template('my-form.html')
+
+
+@app.route('/makechange', methods=['POST'])
+def makechange_post():
+    tab_type = request.form['table']
+    if tab_type == "students":
+        sid = request.form['sID']
+        sname = request.form['SName']
+        lineid = request.form['LID']
+        student = [Student(sId=sid, sName=sname, lineId=lineid)]
+        db.session.add_all(student)
+        msg = "Added data to students"
+    elif tab_type == "homeworks":
+        aid = request.form['aID']
+        aaa = request.form['sID2']
+        floc = request.form['fLoc']
+        lab = request.form['Lab']
+        homework = [Homework(aId=aid, sId=aaa, file=floc, label=lab)]
+        db.session.add_all(homework)
+        msg = "Added data to homeworks"
+    elif tab_type == "assignments":
+        aid = request.form['aID2']
+        pmt = request.form['pmt']
+        assignment = [Assignment(aId=aid, prompt=pmt)]
+        db.session.add_all(assignment)
+        msg = "Added data to assignments"
+    db.session.commit()
+    return msg
 
 
 @app.route('/review')
@@ -108,18 +140,7 @@ def addData():
     db.session.commit()
     return "added"
 
-@app.route('/makechange')
-def makechange():
-    #make changes to table
-    return render_template('my-form.html')
 
-
-@app.route('/makechange', methods=['POST'])
-def makechange_post():
-    # a = request.form["Student_ID"]
-    # b = request.form["Student_Name"]
-    # c = request.form["Line_ID"]
-    return "123"
 
 if __name__ == "__main__":
     app.run(debug=True)

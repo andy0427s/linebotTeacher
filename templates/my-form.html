@@ -33,6 +33,11 @@ div {
 }
 </style>
 <body>
+<script src="https://code.jquery.com/jquery-3.6.0.js"
+    integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+
+
+<form method = "POST">
 
     <h3>Make Changes To Data Here!</h3>
 
@@ -44,44 +49,70 @@ div {
           <option value="homeworks">Homeworks</option>
           <option value="assignments">Assignments</option>
         </select>
+        
+        <div class="scol">
+          <label for="sID">Student ID</label>
+          <input type="text" id="sID" name="sID" placeholder="Student ID..">
 
-        <label for="fname">Student ID</label>
-        <input type="text" id="fname" name="Student_ID" placeholder="Student ID..">
+          <label for="SName">Student Name</label>
+          <input type="text" id="SName" name="SName" placeholder="Student Name..">
 
-        <label for="lname">Student Name</label>
-        <input type="text" id="lname" name="Student_Name" placeholder="Student Name..">
+          <label for="LID">LINE ID</label>
+          <input type="text" id="LID" name="LID" placeholder="LINE ID..">
+        </div>
 
-        <label for="lname">LINE ID</label>
-        <input type="text" id="lname" name="Line_ID" placeholder="LINE ID..">
+        <div class="hcol" style = "display:none;">
+          <label for="aID">Assignment ID</label>
+          <input type="text" id="aID" name="aID" placeholder="Assignment ID..">
 
+          <label for="sID2">Student ID</label>
+          <input type="text" id="sID2" name="sID2" placeholder="Student ID..">
 
+          <label for="fLoc">File Location</label>
+          <input type="text" id="fLoc" name="fLoc" placeholder="File Location..">
+
+<!--          <label for="sTime">Submit Time</label>-->
+<!--          <input type="text" id="sTime" name="sTime" placeholder="Submit Time..">-->
+
+          <label for="Lab">Label</label>
+          <input type="text" id="Lab" name="Lab" placeholder="Label..">
+        </div>
+
+        <div class="acol" style = "display:none;">
+          <label for="aID2">Assignment ID</label>
+          <input type="text" id="aID2" name="aID2" placeholder="Assignment ID..">
+
+          <label for="pmt">Prompt</label>
+          <input type="text" id="pmt" name="pmt" placeholder="Prompt..">
+        </div>
 
         <input type="submit" value="Submit">
       </form>
     </div>
-    <script src="https://code.jquery.com/jquery-3.6.0.js"
-        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
-    <script>//By Johnson, 想做出互動式的欄位, 未完成
 
-        // let data_col = [
-        //     ["Student ID","Student Name","LINE ID"],
-        //     [],
-        //     []
-        // ];
+    <script>
         $('#table').change(function () {
-            console.log($(this).val());});
-
-
-
-            // const nowCity = $(this).val();
-            // const districtValue = districtArray[nowCity];
-            // console.log('districtValue', districtValue);
-
-
-        // $('#district option').each(function () {
-        //     $(this).text(districtValue[$(this).val()]);
-        // });
-
+            console.log($(this).val());
+            var val = $(this).val();
+            if (val === "students"){
+              $(".scol").show();
+              $(".hcol").hide();
+              $(".acol").hide();
+            }
+            if (val === "homeworks"){
+              $(".scol").hide();
+              $(".hcol").show();
+              $(".acol").hide();
+            }
+            if (val === "assignments"){
+              $(".scol").hide();
+              $(".hcol").hide();
+              $(".acol").show();
+            }
+          });
+      
+          
     </script>
+</form>
 </body>
 </html>
