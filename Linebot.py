@@ -4,7 +4,7 @@ import os, time, string
 from datetime import datetime
 
 from flask import Flask, render_template, abort, request
-from app import app, db, Student, Homework, Assignment
+from app import *
 # https://github.com/line/line-bot-sdk-python
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
