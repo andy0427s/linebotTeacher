@@ -15,7 +15,7 @@ from linebot.models import (
     LocationSendMessage, ImageSendMessage, StickerSendMessage
 )
 
-# Audio recongnition
+# audio to text (google api)
 import speech_recognition as sr
 
 
@@ -67,6 +67,27 @@ def callback():
         return "OK"
 
 
+# Google 語音轉文字 API
+
+def transcribe(wav_path):
+    
+    # Speech to Text by Google free API
+    # language: en-US, zh-TW
+    
+    
+    r = sr.Recognizer()
+    with sr.AudioFile(wav_path) as source:
+        audio = r.record(source)
+    try:
+        return r.recognize_google(audio, language="en-US")
+    except sr.UnknownValueError:
+        print("Google Speech Recognition could not understand audio")
+    except sr.RequestError as e:
+        print("Could not request results from Google Speech Recognition service; {0}".format(e))
+    return None
+        
+
+
 # 接收 LINE 的資訊 / 回傳相同資訊
 
 @handler.add(MessageEvent, message=TextMessage)
@@ -78,32 +99,49 @@ def handle_message(event):
     line_bot_api.reply_message(event.reply_token, reply)
 
 
-# Line錄音回傳功能 / 回傳mp3音檔至本機端 
+
+# 1. Line錄音回傳功能 (本機端-mp3) 
+# 2. 同步mp3音檔轉wav (mp3 to wav)
+# 3. Google API寫入文字檔 (txt)
 
 @handler.add(MessageEvent, message=AudioMessage)
 def handle_audio(event):
 
-    now = time.strftime("%Y-%m-%d-%H-%M",time.localtime(time.time()))  # 按照時間順序新增檔名
+    now = time.strftime("%Y%m%d-%H%M",time.localtime(time.time()))  # 按照時間順序新增檔名
     audio_name = '_recording_hw'
     audio_content = line_bot_api.get_message_content(event.message.id)
-    audio_name = now+audio_name+'.mp3'
+    mp3file = now+audio_name+'.mp3'
     wavfile = now+audio_name+'.wav'
+    txtfile = now+audio_name+'.txt'
 
-
-    path='./recording/'+audio_name  # mp3 file path 
+    path='./recording/'+mp3file  # mp3 file path 
     path_wav='./recording_wav/'+wavfile # wav file path
+    path_txt='./text/'+txtfile # txt file path
 
     with open(path, 'wb') as fd:
         for chunk in audio_content.iter_content():
             fd.write(chunk)
 
-# mp3 file converter (to wav file) - ffmpeg must in same path
+    # mp3 to wav converter - ffmpeg in same path
     os.system('ffmpeg -y -i ' + path + ' ' + path_wav + ' -loglevel quiet')
 
 
+    # audio to txt converter - google api
+    audio_filename = "./recording_wav/{now}{audio_name}.wav".format(now=now ,audio_name='_recording_hw')
+    text = transcribe(audio_filename)
+    # print('Transcribe:', text)
+    # line_bot_api.reply_message(event.reply_token, TextSendMessage(text = text))
 
 
-
+    # Text result testing 
+    if text == None:
+        print('Google did not understand the sound, please try again')
+    
+    else:
+        print('Successful Uploading')
+        with open(path_txt, 'w') as ft:
+            ft.write(text)
+            ft.close()
     
 
 # Run app on Heroku server
