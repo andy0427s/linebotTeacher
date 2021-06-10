@@ -1,13 +1,19 @@
 from flask import Flask, render_template, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from sqlalchemy import exc
 
-from sqlalchemy.orm import query
+# from sqlalchemy.orm import query
 
 # main goal:
 # provide a platform for teachers to interact with a SQL database containing student assignments
 # allow teachers to give new assignments
 #
+
+# Todo:
+# move functions to separate file?
+# clean up pages
+
 
 app = Flask(__name__)
 
@@ -119,8 +125,11 @@ def addStu():
 
 @app.route('/addhw')
 def addHw():
-    addHomework(22, "a983g", "/uploaded/sss.wav")
-    return "added homework!"
+    try:
+        addHomework(22, "a983g", "/uploaded/sss.wav")
+        return "added homework!"
+    except exc.IntegrityError:
+        return "Failed to add, homework might already exist"
 
 @app.route('/addass')
 def addAss():
