@@ -144,6 +144,10 @@ def handle_audio(event):
             ft.close()
     
 
+#LINE ID, Assignment ID, path, label(string from voice recognition)
+
+
+
 # Run app on Heroku server
 if __name__ == "__main__":
     app.run(debug=True)
