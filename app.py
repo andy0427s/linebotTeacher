@@ -30,7 +30,7 @@ class Student(db.Model):
     lineId = db.Column(db.String(30), unique=True, nullable=False)
 
     def __repr__(self):
-        return f'<Student ID: {self.sId}, Name: {self.sName}, LINE: {self.lineId}>'
+        return f'[Student ID: {self.sId}, Name: {self.sName}, LINE: {self.lineId}]'
 
 
 class Homework(db.Model):
@@ -163,7 +163,7 @@ def addHomework(aId, lineId, file):
         return f"failed to add {file}"
 
 def addAssignment(prompt):
-    # this shouldn't ever error to no need to try/except
+    # this shouldn't ever error so no need to try/except
     entry = Assignment(prompt=prompt)
     db.session.add(entry)
     db.session.commit()
@@ -199,7 +199,30 @@ def deleteAssignment(aId):
         db.session.rollback()
         return f"failed to delete assignment {aId}"
 
+def updateStudent(sId, newId=None, newName=None, newLineId=None):
+    query = Student.query.get(sId)
+    olddata = query.__repr__()
+    if query:
+        if newId:
+            query.sId = newId
+        if newName:
+            query.sName = newName
+        if newLineId:
+            query.lineId = newLineId
+        try:
+            db.session.commit()
+            newdata = query.__repr__()
+            return f"updated {olddata} to {newdata}"
+        except:
+            db.session.rollback()
+            return f"failed to update {olddata}"
+    else:
+        return f"failed to find student {sId}"
 
+@app.route('/updatestu')
+def updateStu():
+    return updateStudent(1, newId=1,newName="Jim", newLineId="d848e")
+    # return updateStudent(1, newName="Jones")
 
-# if __name__ == "__main__":
-#     app.run(debug=True)
+if __name__ == "__main__":
+    app.run(debug=True)
