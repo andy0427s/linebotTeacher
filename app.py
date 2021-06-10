@@ -2,6 +2,8 @@ from flask import Flask, render_template, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
+from sqlalchemy.orm import query
+
 # main goal:
 # provide a platform for teachers to interact with a SQL database containing student assignments
 # allow teachers to give new assignments
@@ -111,7 +113,7 @@ def addData():
 
 
 @app.route('/addstu')
-def assStu():
+def addStu():
     addStudent(22, "Eve", "o147v")
     return "added student!"
 
@@ -125,6 +127,29 @@ def addAss():
     addAssignment("He went to Spain")
     return "added assignment!"
 
+@app.route('/delstu')
+def delStu():
+    try:
+        deleteStudent(2)
+        return "deleted student"
+    except:
+        return "failed to delete"
+
+@app.route('/delhw')
+def delHw():
+    try:
+        deleteHomework("/uploaded/sss.wav")
+        return "deleted homework"
+    except:
+        return "failed to delete"
+
+@app.route('/delass')
+def delAss():
+    try:
+        deleteAssignment(2)
+        return "deleted assignment"
+    except:
+        return "failed to delete"
 
 def addStudent(sId, sName, lineId):
     entry = Student(sId=sId, sName=sName, lineId=lineId)
@@ -141,6 +166,20 @@ def addAssignment(prompt):
     db.session.add(entry)
     db.session.commit()
 
+def deleteStudent(sId):
+    query = Student.query.get(sId)
+    db.session.delete(query)
+    db.session.commit()
+
+def deleteHomework(file):
+    query = Homework.query.get(file)
+    db.session.delete(query)
+    db.session.commit()
+
+def deleteAssignment(aId):
+    query = Assignment.query.get(aId)
+    db.session.delete(query)
+    db.session.commit()
 
 # if __name__ == "__main__":
 #     app.run(debug=True)
