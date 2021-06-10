@@ -148,8 +148,6 @@ def addData():
     return "added"
 
 
-<<<<<<< HEAD
-=======
 # below are test URLs once again, will delete at a later point
 @app.route('/addstu')
 def addStu():
@@ -257,7 +255,6 @@ def updateStudent(sId, newId=None, newName=None, newLineId=None):
 def updateStu():
     return updateStudent(1, newId=1,newName="Jim", newLineId="d848e")
     # return updateStudent(1, newName="Jones")
->>>>>>> c905e482759c5cd85cf85a32ca94c391e1375d79
 
 if __name__ == "__main__":
     app.run(debug=True)
