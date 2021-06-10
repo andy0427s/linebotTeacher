@@ -20,9 +20,9 @@ import azure.cognitiveservices.speech as speechsdk
 # create flask server
 app = Flask(__name__)
 # your linebot message API - Channel access token (from LINE Developer)
-line_bot_api = LineBotApi('8Ts4CK+L4y61wlM8vH+isb6A/mjewJ2Mo0El/M/oyLN9LRjPtug+5aHn8UHkh9kGpdSF7R4ozJI1N/6+XZJAs1vHPJT+lMfLvDZ8Or1i4dy+MwwP9ezTZvGwNn6dlbqz+Pf3i7LjNsDLjSN0PAaEuwdB04t89/1O/w1cDnyilFU=')
+line_bot_api = LineBotApi('34XgKJ1J2nzv8Q+1Ci/I0GTspLgByGC5XEa1tk/skA9JgeDGhla06m9rAxJ18HRJ6u8lbsYqej3Hxd1SxihSEd823HGXEt7UHFcE98IARleYwLHtavHDpXPnqCg+WtofIZzajRWZVOi2Bt1iikVNtwdB04t89/1O/w1cDnyilFU=')
 # your linebot message API - Channel secret
-handler = WebhookHandler('7a9fd1a414a2222f84906dac60356264')
+handler = WebhookHandler('e6b6a15e5d1336a4056825178bbcb5f9')
 
 
 @app.route("/callback", methods=['POST'])
