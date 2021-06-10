@@ -128,7 +128,14 @@ def handle_audio(event):
 
     # audio to txt converter - google api
     audio_filename = "./recording_wav/{now}{audio_name}.wav".format(now=now ,audio_name='_recording_hw')
+
+
+    # Linebot-label 
     text = transcribe(audio_filename)
+    label = text 
+
+    assignmentID += 1
+
     # print('Transcribe:', text)
     # line_bot_api.reply_message(event.reply_token, TextSendMessage(text = text))
 
@@ -139,10 +146,18 @@ def handle_audio(event):
     
     else:
         print('Successful Uploading')
-        with open(path_txt, 'w') as ft:
-            ft.write(text)
-            ft.close()
+
+        # txt file saving if needed
+
+        # with open(path_txt, 'w') as ft:
+        #     ft.write(text)
+        #     ft.close()
     
+
+#LINE ID, Assignment ID, path, label(string from voice recognition)
+
+output = addHomework(assignmentID, LINEID, path_db, label)
+
 
 # Run app on Heroku server
 if __name__ == "__main__":
