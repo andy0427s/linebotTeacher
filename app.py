@@ -155,7 +155,7 @@ def addStu():
 
 @app.route('/addhw')
 def addHw():
-    return addHomework(22, "a983g", "/uploaded/sss.wav")
+    return addHomework(22, "a983g", "/uploaded/sss.wav", "mary")
 
 @app.route('/addass')
 def addAss():
@@ -184,8 +184,8 @@ def addStudent(sId, sName, lineId):
         return f"failed to add {sName}"
     
 
-def addHomework(aId, lineId, file):
-    entry = Homework(aId=aId, lineId=lineId, file=file)
+def addHomework(aId, lineId, file, label=None):
+    entry = Homework(aId=aId, lineId=lineId, file=file, label=label)
     try:
         db.session.add(entry)
         db.session.commit()
