@@ -2,10 +2,17 @@ from flask import Flask, render_template, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
+# from sqlalchemy.orm import query
+
 # main goal:
 # provide a platform for teachers to interact with a SQL database containing student assignments
 # allow teachers to give new assignments
 #
+
+# Todo:
+# move functions to separate file?
+# clean up pages
+
 
 app = Flask(__name__)
 
@@ -23,13 +30,13 @@ class Student(db.Model):
     lineId = db.Column(db.String(30), unique=True, nullable=False)
 
     def __repr__(self):
-        return f'<Student ID: {self.sId}, Name: {self.sName}, LINE: {self.lineId}>'
+        return f'[Student ID: {self.sId}, Name: {self.sName}, LINE: {self.lineId}]'
 
 
 class Homework(db.Model):
     __tablename__ = 'homework'
     aId = db.Column(db.Integer, nullable=False)
-    sId = db.Column(db.Integer, nullable=False)
+    lineId = db.Column(db.Integer, nullable=False)
     file = db.Column(db.String(50), primary_key=True)
     submit_time = db.Column(db.DateTime, nullable=False, default=datetime.now)
     # result from Azure
@@ -38,7 +45,7 @@ class Homework(db.Model):
 
 class Assignment(db.Model):
     __tablename__ = 'assignment'
-    aId = db.Column(db.Integer, primary_key=True)
+    aId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     prompt = db.Column(db.String(100))
 
 
@@ -133,14 +140,124 @@ def addData():
     s4 = Student(sId=4, sName="Dylan", lineId="m410p")
     students = [s1, s2, s3, s4]
     db.session.add_all(students)
-    a1 = Assignment(aId=2, prompt="go to the store")
-    h1 = Homework(aId=2, sId=25, file="/uploaded/zzz.wav")
+    a1 = Assignment(prompt="go to the store")
+    h1 = Homework(aId=2, lineId='f027k', file="/uploaded/zzz.wav")
     entries = [a1, h1]
     db.session.add_all(entries)
     db.session.commit()
     return "added"
 
 
+<<<<<<< HEAD
+=======
+# below are test URLs once again, will delete at a later point
+@app.route('/addstu')
+def addStu():
+    return addStudent(22, "Eve", "o147v")
+
+@app.route('/addhw')
+def addHw():
+    return addHomework(22, "a983g", "/uploaded/sss.wav")
+
+@app.route('/addass')
+def addAss():
+    return addAssignment("He went to Spain")
+
+@app.route('/delstu')
+def delStu():
+    return deleteStudent(2)
+
+@app.route('/delhw')
+def delHw():
+    return deleteHomework("/uploaded/sss.wav")
+
+@app.route('/delass')
+def delAss():
+    return deleteAssignment(2)
+
+def addStudent(sId, sName, lineId):
+    entry = Student(sId=sId, sName=sName, lineId=lineId)
+    try:
+        db.session.add(entry)
+        db.session.commit()
+        return f"added {sName}!"
+    except:
+        db.session.rollback()
+        return f"failed to add {sName}"
+    
+
+def addHomework(aId, lineId, file):
+    entry = Homework(aId=aId, lineId=lineId, file=file)
+    try:
+        db.session.add(entry)
+        db.session.commit()
+        return f"added{file}!"
+    except:
+        db.session.rollback()
+        return f"failed to add {file}"
+
+def addAssignment(prompt):
+    # this shouldn't ever error so no need to try/except
+    entry = Assignment(prompt=prompt)
+    db.session.add(entry)
+    db.session.commit()
+    return f"added assignment {prompt}!"
+
+def deleteStudent(sId):
+    query = Student.query.get(sId)
+    try:
+        db.session.delete(query)
+        db.session.commit()
+        return f"deleted student {sId}"
+    except:
+        db.session.rollback()
+        return f"failed to delete student {sId}"
+
+def deleteHomework(file):
+    query = Homework.query.get(file)
+    try:
+        db.session.delete(query)
+        db.session.commit()
+        return f"deleted homework {file}"
+    except:
+        db.session.rollback()
+        return f"failed to delete homework {file}"
+
+def deleteAssignment(aId):
+    query = Assignment.query.get(aId)
+    try:
+        db.session.delete(query)
+        db.session.commit()
+        return f"deleted assignment {aId}"
+    except:
+        db.session.rollback()
+        return f"failed to delete assignment {aId}"
+
+def updateStudent(sId, newId=None, newName=None, newLineId=None):
+    query = Student.query.get(sId)
+    olddata = query.__repr__()
+    if query:
+        if newId:
+            query.sId = newId
+        if newName:
+            query.sName = newName
+        if newLineId:
+            query.lineId = newLineId
+        try:
+            db.session.commit()
+            newdata = query.__repr__()
+            return f"updated {olddata} to {newdata}"
+        except:
+            db.session.rollback()
+            return f"failed to update {olddata}"
+    else:
+        return f"failed to find student {sId}"
+
+@app.route('/updatestu')
+def updateStu():
+    return updateStudent(1, newId=1,newName="Jim", newLineId="d848e")
+    # return updateStudent(1, newName="Jones")
+>>>>>>> c905e482759c5cd85cf85a32ca94c391e1375d79
 
 if __name__ == "__main__":
     app.run(debug=True)

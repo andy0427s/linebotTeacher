@@ -1,7 +1,6 @@
 # 匯入所需模組
 
-
-import os
+import os, time, string
 from datetime import datetime
 
 from flask import Flask, render_template, abort, request
@@ -9,7 +8,16 @@ from app import app, db, Student, Homework, Assignment
 # https://github.com/line/line-bot-sdk-python
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, TextMessage, TextSendMessage
+
+# Audio file handing
+from linebot.models import (
+    MessageEvent, TextMessage, TextSendMessage, AudioMessage,
+    LocationSendMessage, ImageSendMessage, StickerSendMessage
+)
+
+# Audio recongnition
+import speech_recognition as sr
+
 
 
 # import for database (SQLalchemy)
@@ -38,7 +46,7 @@ def addOne():
 #####
 
 
-# Linebot part
+# Linebot 基本設定
 
 
 @app.route("/callback", methods=["GET", "POST"])
@@ -69,6 +77,34 @@ def handle_message(event):
     reply = TextSendMessage(text=f"{get_message}")
     line_bot_api.reply_message(event.reply_token, reply)
 
+
+# Line錄音回傳功能 / 回傳mp3音檔至本機端 
+
+@handler.add(MessageEvent, message=AudioMessage)
+def handle_audio(event):
+
+    now = time.strftime("%Y-%m-%d-%H-%M",time.localtime(time.time()))  # 按照時間順序新增檔名
+    audio_name = '_recording_hw'
+    audio_content = line_bot_api.get_message_content(event.message.id)
+    audio_name = now+audio_name+'.mp3'
+    wavfile = now+audio_name+'.wav'
+
+
+    path='./recording/'+audio_name  # mp3 file path 
+    path_wav='./recording_wav/'+wavfile # wav file path
+
+    with open(path, 'wb') as fd:
+        for chunk in audio_content.iter_content():
+            fd.write(chunk)
+
+# mp3 file converter (to wav file) - ffmpeg must in same path
+    os.system('ffmpeg -y -i ' + path + ' ' + path_wav + ' -loglevel quiet')
+
+
+
+
+
+    
 
 # Run app on Heroku server
 if __name__ == "__main__":
