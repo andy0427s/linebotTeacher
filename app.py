@@ -38,7 +38,7 @@ class Homework(db.Model):
 
 class Assignment(db.Model):
     __tablename__ = 'assignment'
-    aId = db.Column(db.Integer, primary_key=True)
+    aId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     prompt = db.Column(db.String(100))
 
 
@@ -101,23 +101,45 @@ def addData():
     s4 = Student(sId=4, sName="Dylan", lineId="m410p")
     students = [s1, s2, s3, s4]
     db.session.add_all(students)
-    a1 = Assignment(aId=2, prompt="go to the store")
+    a1 = Assignment(prompt="go to the store")
     h1 = Homework(aId=2, lineId='f027k', file="/uploaded/zzz.wav")
     entries = [a1, h1]
     db.session.add_all(entries)
     db.session.commit()
     return "added"
 
+
+
+@app.route('/addstu')
+def assStu():
+    addStudent(22, "Eve", "o147v")
+    return "added student!"
+
+@app.route('/addhw')
+def addHw():
+    addHomework(22, "a983g", "/uploaded/sss.wav")
+    return "added homework!"
+
+@app.route('/addass')
+def addAss():
+    addAssignment("He went to Spain")
+    return "added assignment!"
+
+
+def addStudent(sId, sName, lineId):
+    entry = Student(sId=sId, sName=sName, lineId=lineId)
+    db.session.add(entry)
+    db.session.commit()
+
 def addHomework(aId, lineId, file):
     entry = Homework(aId=aId, lineId=lineId, file=file)
     db.session.add(entry)
     db.session.commit()
 
-@app.route('/addtest')
-def addTest():
-    addHomework(22, "a983g", "/uploaded/sss.wav")
-    return "added!"
-
+def addAssignment(prompt):
+    entry = Assignment(prompt=prompt)
+    db.session.add(entry)
+    db.session.commit()
 
 
 # if __name__ == "__main__":
