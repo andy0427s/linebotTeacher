@@ -62,24 +62,38 @@ def callback():
 #     except sr.RequestError as e:
 #         print("Could not request results from Google Speech Recognition service; {0}".format(e))
 #     return None
+
     
+# Line錄音回傳功能 / 回傳mp3音檔至本機端 
+
 @handler.add(MessageEvent, message=AudioMessage)
 def handle_audio(event):
 
-    now = time.strftime("%Y-%m-%d-%H-%M",time.localtime(time.time()))
+    now = time.strftime("%Y-%m-%d-%H-%M",time.localtime(time.time()))  # 按照時間順序新增檔名
     audio_name = '_recording_hw'
     audio_content = line_bot_api.get_message_content(event.message.id)
     audio_name = now+audio_name+'.mp3'
-    path='./recording/'+audio_name
+    wavfile = now+audio_name+'.wav'
+
+
+    path='./recording/'+audio_name  # mp3 file path 
+    path_wav='./recording_wav/'+wavfile # wav file path
 
     with open(path, 'wb') as fd:
         for chunk in audio_content.iter_content():
             fd.write(chunk)
 
-'''
+# mp3 file converter (to wav file) - ffmpeg in same path
+    os.system('ffmpeg -y -i ' + path + ' ' + path_wav + ' -loglevel quiet')
+
+
+
 # run app
 if __name__ == "__main__":
     app.run(host='127.0.0.1', port=12345)
+
+
+'''
 
 speech_key, service_region = "c6d717109b46431e9ae8f4be76592b0f", "southcentralus"
 speech_config = speechsdk.SpeechConfig(subscription=speech_key, region=service_region)
