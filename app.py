@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request
+from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -147,9 +147,24 @@ def addData():
     db.session.commit()
     return "added"
 
+@app.route('/reset')
+def reset():
+    db.drop_all()
+    db.create_all()
+    s1 = Student(sId=1, sName="Bob", lineId="e109bs")
+    s2 = Student(sId=2, sName="Alice", lineId="a983g")
+    s3 = Student(sId=3, sName="Charlie", lineId="f027k")
+    s4 = Student(sId=4, sName="Dylan", lineId="m410p")
+    a1 = Assignment(prompt="You should go to the store")
+    a2 = Assignment(prompt="He finished his breakfast early")
+    a3 = Assignment(prompt="The flowers bloomed early this year")
+    h1 = Homework(aId=2, lineId='f027k', file="/uploaded/zzz.wav")
+    entries = [s1,s2,s3,s4,a1,a2,a3,h1]
+    db.session.add_all(entries)
+    db.session.commit()
+    return redirect('/showtables')
 
-<<<<<<< HEAD
-=======
+
 # below are test URLs once again, will delete at a later point
 @app.route('/addstu')
 def addStu():
@@ -157,7 +172,7 @@ def addStu():
 
 @app.route('/addhw')
 def addHw():
-    return addHomework(22, "a983g", "/uploaded/sss.wav")
+    return addHomework(22, "a983g", "/uploaded/sss.wav", "mary")
 
 @app.route('/addass')
 def addAss():
@@ -186,8 +201,8 @@ def addStudent(sId, sName, lineId):
         return f"failed to add {sName}"
     
 
-def addHomework(aId, lineId, file):
-    entry = Homework(aId=aId, lineId=lineId, file=file)
+def addHomework(aId, lineId, file, label=None):
+    entry = Homework(aId=aId, lineId=lineId, file=file, label=label)
     try:
         db.session.add(entry)
         db.session.commit()
@@ -257,7 +272,6 @@ def updateStudent(sId, newId=None, newName=None, newLineId=None):
 def updateStu():
     return updateStudent(1, newId=1,newName="Jim", newLineId="d848e")
     # return updateStudent(1, newName="Jones")
->>>>>>> c905e482759c5cd85cf85a32ca94c391e1375d79
 
 if __name__ == "__main__":
     app.run(debug=True)
