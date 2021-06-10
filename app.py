@@ -1,7 +1,6 @@
 from flask import Flask, render_template, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from sqlalchemy import exc
 
 # from sqlalchemy.orm import query
 
@@ -117,78 +116,90 @@ def addData():
     return "added"
 
 
-
+# below are test URLs once again, will delete at a later point
 @app.route('/addstu')
 def addStu():
-    addStudent(22, "Eve", "o147v")
-    return "added student!"
+    return addStudent(22, "Eve", "o147v")
 
 @app.route('/addhw')
 def addHw():
-    try:
-        addHomework(22, "a983g", "/uploaded/sss.wav")
-        return "added homework!"
-    except exc.IntegrityError:
-        return "Failed to add, homework might already exist"
+    return addHomework(22, "a983g", "/uploaded/sss.wav")
 
 @app.route('/addass')
 def addAss():
-    addAssignment("He went to Spain")
-    return "added assignment!"
+    return addAssignment("He went to Spain")
 
 @app.route('/delstu')
 def delStu():
-    try:
-        deleteStudent(2)
-        return "deleted student"
-    except:
-        return "failed to delete"
+    return deleteStudent(2)
 
 @app.route('/delhw')
 def delHw():
-    try:
-        deleteHomework("/uploaded/sss.wav")
-        return "deleted homework"
-    except:
-        return "failed to delete"
+    return deleteHomework("/uploaded/sss.wav")
 
 @app.route('/delass')
 def delAss():
-    try:
-        deleteAssignment(2)
-        return "deleted assignment"
-    except:
-        return "failed to delete"
+    return deleteAssignment(2)
 
 def addStudent(sId, sName, lineId):
     entry = Student(sId=sId, sName=sName, lineId=lineId)
-    db.session.add(entry)
-    db.session.commit()
+    try:
+        db.session.add(entry)
+        db.session.commit()
+        return f"added {sName}!"
+    except:
+        db.session.rollback()
+        return f"failed to add {sName}"
+    
 
 def addHomework(aId, lineId, file):
     entry = Homework(aId=aId, lineId=lineId, file=file)
-    db.session.add(entry)
-    db.session.commit()
+    try:
+        db.session.add(entry)
+        db.session.commit()
+        return f"added{file}!"
+    except:
+        db.session.rollback()
+        return f"failed to add {file}"
 
 def addAssignment(prompt):
+    # this shouldn't ever error to no need to try/except
     entry = Assignment(prompt=prompt)
     db.session.add(entry)
     db.session.commit()
+    return f"added assignment {prompt}!"
 
 def deleteStudent(sId):
     query = Student.query.get(sId)
-    db.session.delete(query)
-    db.session.commit()
+    try:
+        db.session.delete(query)
+        db.session.commit()
+        return f"deleted student {sId}"
+    except:
+        db.session.rollback()
+        return f"failed to delete student {sId}"
 
 def deleteHomework(file):
     query = Homework.query.get(file)
-    db.session.delete(query)
-    db.session.commit()
+    try:
+        db.session.delete(query)
+        db.session.commit()
+        return f"deleted homework {file}"
+    except:
+        db.session.rollback()
+        return f"failed to delete homework {file}"
 
 def deleteAssignment(aId):
     query = Assignment.query.get(aId)
-    db.session.delete(query)
-    db.session.commit()
+    try:
+        db.session.delete(query)
+        db.session.commit()
+        return f"deleted assignment {aId}"
+    except:
+        db.session.rollback()
+        return f"failed to delete assignment {aId}"
+
+
 
 # if __name__ == "__main__":
 #     app.run(debug=True)
