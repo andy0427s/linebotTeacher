@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request
+from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -146,6 +146,23 @@ def addData():
     db.session.add_all(entries)
     db.session.commit()
     return "added"
+
+@app.route('/reset')
+def reset():
+    db.drop_all()
+    db.create_all()
+    s1 = Student(sId=1, sName="Bob", lineId="e109bs")
+    s2 = Student(sId=2, sName="Alice", lineId="a983g")
+    s3 = Student(sId=3, sName="Charlie", lineId="f027k")
+    s4 = Student(sId=4, sName="Dylan", lineId="m410p")
+    a1 = Assignment(prompt="You should go to the store")
+    a2 = Assignment(prompt="He finished his breakfast early")
+    a3 = Assignment(prompt="The flowers bloomed early this year")
+    h1 = Homework(aId=2, lineId='f027k', file="/uploaded/zzz.wav")
+    entries = [s1,s2,s3,s4,a1,a2,a3,h1]
+    db.session.add_all(entries)
+    db.session.commit()
+    return redirect('/showtables')
 
 
 # below are test URLs once again, will delete at a later point
