@@ -11,7 +11,7 @@
 
 <body>
 
-    <form id="createForm" method="POST">
+    <form method="POST">
         <div>
             <label for="table" class="form-label">Table Name</label>
             <select class="form-select" id="table" name="table">
@@ -20,73 +20,83 @@
                 <option value="assignments">Assignments</option>
             </select>
 
-            <div class="scol">
+            <div class="student-form">
                 <div class="mb-3">
-                    <label for="sID" class="form-label">Student ID</label>
-                    <input type="text" class="form-control" id="sID" name="sID" placeholder="Student ID.." required>
+                    <label for="s-sId" class="form-label">Student ID</label>
+                    <input type="text" class="form-control" id="s-sId" name="s-sId" placeholder="Student ID.." required>
                 </div>
                 <div class="mb-3">
-                    <label for="SName" class="form-label">Student Name</label>
-                    <input type="text" class="form-control" id="SName" name="SName" placeholder="Student Name.."
+                    <label for="s-sName" class="form-label">Student Name</label>
+                    <input type="text" class="form-control" id="s-sName" name="s-sName" placeholder="Student Name.."
                         required>
                 </div>
                 <div class="mb-3">
-                    <label for="LID" class="form-label">LINE ID</label>
-                    <input type="text" class="form-control" id="LID" name="LID" placeholder="LINE ID.." required>
+                    <label for="s-lineId" class="form-label">LINE ID</label>
+                    <input type="text" class="form-control" id="s-lineId" name="s-lineId" placeholder="LINE ID.."
+                        required>
                 </div>
             </div>
 
-            <div class="hcol" style="display:none;">
+            <div class="homework-form" style="display:none;">
                 <div class="mb-3">
-                    <label for="aID" class="form-label">Assignment ID</label>
-                    <input type="text" class="form-control" id="aID" name="aID" placeholder="Assignment ID.." required>
-                </div>
-                <div class="mb-3">
-                    <label for="sID2" class="form-label">Student ID</label>
-                    <input type="text" class="form-control" id="sID2" name="sID2" placeholder="Student ID.." required>
-                </div>
-                <div class="mb-3">
-                    <label for="fLoc" class="form-label">File Location</label>
-                    <input type="text" class="form-control" id="fLoc" name="fLoc" placeholder="File Location.."
+                    <label for="h-aId" class="form-label">Assignment ID</label>
+                    <input type="text" class="form-control" id="h-aId" name="h-aId" placeholder="Assignment ID.."
                         required>
                 </div>
                 <div class="mb-3">
-                    <label for="Lab" class="form-label">Label</label>
-                    <input type="text" class="form-control" id="Lab" name="Lab" placeholder="Label..">
+                    <label for="h-sId" class="form-label">Student ID</label>
+                    <input type="text" class="form-control" id="h-sId" name="h-sId" placeholder="Student ID.." required>
+                </div>
+                <div class="mb-3">
+                    <label for="h-file" class="form-label">File Location</label>
+                    <input type="text" class="form-control" id="h-file" name="h-file" placeholder="File Location.."
+                        required>
+                </div>
+                <div class="mb-3">
+                    <label for="h-label" class="form-label">Label</label>
+                    <input type="text" class="form-control" id="h-label" name="h-label" placeholder="Label..">
                 </div>
             </div>
 
-            <div class="acol" style="display:none;">
+            <div class="assignment-form" style="display:none;">
                 <div class="mb-3">
-                    <label for="pmt" class="form-label">Prompt</label>
-                    <input type="text" class="form-control" id="pmt" name="pmt" placeholder="Prompt.." required>
+                    <label for="a-prompt" class="form-label">Prompt</label>
+                    <input type="text" class="form-control" id="a-prompt" name="a-prompt" placeholder="Prompt.."
+                        required>
                 </div>
             </div>
 
             <input class="btn btn-primary" type="submit" value="Submit">
     </form>
+
+    {% if message %}
+    <div class="mt-3">
+        <p>{{ message }}</p>
     </div>
+    {% endif %}
+
+
 
     <script>
         $('input:text').prop('disabled', true);
-        $(".scol input").prop('disabled', false);
+        $(".student-form input").prop('disabled', false);
         $('#table').change(function () {
             // console.log($(this).val());
             var val = $(this).val();
             if (val === "students") {
-                $(".scol").show().find('input').prop('disabled', false);
-                $(".hcol").hide().find('input').prop('disabled', true);
-                $(".acol").hide().find('input').prop('disabled', true);
+                $(".student-form").show().find('input').prop('disabled', false);
+                $(".homework-form").hide().find('input').prop('disabled', true);
+                $(".assignment-form").hide().find('input').prop('disabled', true);
             }
             if (val === "homeworks") {
-                $(".scol").hide().find('input').prop('disabled', true);
-                $(".hcol").show().find('input').prop('disabled', false);
-                $(".acol").hide().find('input').prop('disabled', true);
+                $(".student-form").hide().find('input').prop('disabled', true);
+                $(".homework-form").show().find('input').prop('disabled', false);
+                $(".assignment-form").hide().find('input').prop('disabled', true);
             }
             if (val === "assignments") {
-                $(".scol").hide().find('input').prop('disabled', true);
-                $(".hcol").hide().find('input').prop('disabled', true);
-                $(".acol").show().find('input').prop('disabled', false);
+                $(".student-form").hide().find('input').prop('disabled', true);
+                $(".homework-form").hide().find('input').prop('disabled', true);
+                $(".assignment-form").show().find('input').prop('disabled', false);
             }
         });
 
