@@ -79,20 +79,31 @@ def handle_message(event):
 
 
 # Line錄音回傳功能 / 回傳mp3音檔至本機端 
-# 按照時間順序新增檔名
 
 @handler.add(MessageEvent, message=AudioMessage)
 def handle_audio(event):
 
-    now = time.strftime("%Y-%m-%d-%H-%M",time.localtime(time.time()))
+    now = time.strftime("%Y-%m-%d-%H-%M",time.localtime(time.time()))  # 按照時間順序新增檔名
     audio_name = '_recording_hw'
     audio_content = line_bot_api.get_message_content(event.message.id)
     audio_name = now+audio_name+'.mp3'
-    path='./recording/'+audio_name
+    wavfile = now+audio_name+'.wav'
+
+
+    path='./recording/'+audio_name  # mp3 file path 
+    path_wav='./recording_wav/'+wavfile # wav file path
 
     with open(path, 'wb') as fd:
         for chunk in audio_content.iter_content():
             fd.write(chunk)
+
+# mp3 file converter (to wav file) - ffmpeg must in same path
+    os.system('ffmpeg -y -i ' + path + ' ' + path_wav + ' -loglevel quiet')
+
+
+
+
+
     
 
 # Run app on Heroku server
