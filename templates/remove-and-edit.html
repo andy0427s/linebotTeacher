@@ -9,8 +9,8 @@
 {{ super() }}
 
 <h3>Students</h3>
-<table class="table table-light table-bordered table-hover">
-    <thead>
+<table class="table table-bordered table-hover table-sm">
+    <thead class="table-light">
         <tr>
             <th class="fit">Student ID</th>
             <th>Student Name</th>
@@ -25,7 +25,15 @@
             <td>{{ row['sId'] }}</td>
             <td>{{ row['sName'] }}</td>
             <td>{{ row['lineId'] }}</td>
-            <td><i class="bi bi-pencil"></i></td>
+            <td>
+                <form method="POST" action="/remove-and-edit">
+                    <input type="hidden" name="type" value="student">
+                    <input type="hidden" name="s-sId" value="{{ row['sId'] }}">
+                    <button type="submit" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                </form>
+            </td>
             <td>
                 <form method="POST" action="/remove">
                     <input type="hidden" name="type" value="student">
@@ -45,8 +53,8 @@
 </table>
 
 <h3>Homeworks</h3>
-<table class="table table-light table-bordered table-hover">
-    <thead>
+<table class="table table-bordered table-hover table-sm">
+    <thead class="table-light">
         <tr>
             <th class="fit">Assignment ID</th>
             <th>LINE ID</th>
@@ -65,7 +73,15 @@
             <td>{{ row['file'] }}</td>
             <td>{{ row['submit_time'] }}</td>
             <td>{{ row['label'] }}</td>
-            <td><i class="bi bi-pencil"></i></td>
+            <td>
+                <form method="POST" action="/remove-and-edit">
+                    <input type="hidden" name="type" value="homework">
+                    <input type="hidden" name="h-file" value="{{ row['file'] }}">
+                    <button type="submit" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                </form>
+            </td>
             <td>
                 <form method="POST" action="/remove">
                     <input type="hidden" name="type" value="homework">
@@ -83,8 +99,8 @@
 </table>
 
 <h3>Assignments</h3>
-<table class="table table-light table-bordered table-hover">
-    <thead>
+<table class="table table-bordered table-hover table-sm">
+    <thead class="table-light">
         <tr>
             <th class="fit">Assignment ID</th>
             <th>Prompt</th>
@@ -97,7 +113,16 @@
         <tr>
             <td>{{ row['aId'] }}</td>
             <td>{{ row['prompt'] }}</td>
-            <td><i class="bi bi-pencil"></i></td>
+            <td>
+                <form method="POST" action="/remove-and-edit">
+                    <input type="hidden" name="type" value="assignment">
+                    <input type="hidden" name="a-aId" value="{{ row['aId'] }}">
+                    <button type="submit" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                </form>
+
+            </td>
             <td>
                 <form method="POST" action="/remove">
                     <input type="hidden" name="type" value="assignment">
