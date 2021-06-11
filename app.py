@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request, redirect
+from flask import Flask, render_template, url_for, request, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -15,6 +15,7 @@ from datetime import datetime
 
 
 app = Flask(__name__)
+app.secret_key = 'secretkeyzzz'
 
 
 path_to_db = "/db/new.db"
@@ -79,9 +80,7 @@ def create():
         elif tab_type == "assignments":
             prompt = request.form['a-prompt']
             message = addAssignment(prompt)
-        return render_template('create.html',
-                               page_header="Add Data to Table",
-                               message=message)
+        flash(message)
     return render_template('create.html',
                            page_header="Add Data to Table")
 
@@ -119,12 +118,13 @@ def remove():
     if request.form:
         remove_type = request.form['type']
         if remove_type == "student":
-            deleteStudent(request.form['s-sId'])
+            message = deleteStudent(request.form['s-sId'])
         elif remove_type == "homework":
-            deleteHomework(request.form['h-file'])
+            message = deleteHomework(request.form['h-file'])
         elif remove_type == "assignment":
-            deleteAssignment(request.form['a-aId'])
-    return redirect('/remove-and-edit')
+            message = deleteAssignment(request.form['a-aId'])
+    flash(message)
+    return redirect(url_for('remove_edit'))
 
 
 @app.route('/edit', methods=["POST"])
@@ -135,22 +135,25 @@ def edit():
         newId = request.form['new-sId']
         newName = request.form['new-sName']
         newLineId = request.form['new-lineId']
-        return updateStudent(sId, newId=newId, newName=newName,
-                             newLineId=newLineId)
+        message = updateStudent(sId, newId=newId, newName=newName,
+                                newLineId=newLineId)
     elif edit_type == "homework":
         file = request.form['h-file']
         newaId = request.form['new-aId']
         newLineId = request.form['new-lineId']
         newFile = request.form['new-file']
         newLabel = request.form['new-label']
-        return updateHomework(file, newaId=newaId, newLineId=newLineId, newFile=newFile, newLabel=newLabel)
+        message = updateHomework(
+            file, newaId=newaId, newLineId=newLineId, newFile=newFile, newLabel=newLabel)
     elif edit_type == "assignment":
         aId = request.form['a-aId']
         newId = request.form['new-aId']
         newPrompt = request.form['new-prompt']
-        return updateAssignment(aId, newId=newId, newPrompt=newPrompt)
+        message = updateAssignment(aId, newId=newId, newPrompt=newPrompt)
     else:
-        return "Something went wrong"
+        message = "Something went wrong"
+    flash(message)
+    return redirect(url_for('remove_edit'))
 
     # /makechange now deprecated can be cleaned up
 
@@ -341,7 +344,7 @@ def updateStudent(sId, newId=None, newName=None, newLineId=None):
         try:
             db.session.commit()
             newdata = query.__repr__()
-            return f"updated {olddata} to {newdata}"
+            return f"updated {newdata}!"
         except:
             db.session.rollback()
             return f"failed to update {olddata}"
@@ -364,7 +367,7 @@ def updateHomework(file, newaId=None, newLineId=None, newFile=None, newLabel=Non
         try:
             db.session.commit()
             newdata = query.__repr__()
-            return f"updated {olddata} to {newdata}"
+            return f"updated {newdata}!"
         except:
             db.session.rollback()
             return f"failed to update {olddata}"
@@ -384,7 +387,7 @@ def updateAssignment(aId, newId=None, newPrompt=None):
         try:
             db.session.commit()
             newdata = query.__repr__()
-            return f"updated {olddata} to {newdata}"
+            return f"updated {newdata}!"
         except:
             db.session.rollback()
             return f"failed to update {olddata}"

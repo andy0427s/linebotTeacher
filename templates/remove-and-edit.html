@@ -8,6 +8,15 @@
 {% block page_content %}
 {{ super() }}
 
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+{% for message in messages %}
+<div class="alert-box">{{ message }}</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
 <h3>Students</h3>
 <table class="table table-bordered table-hover table-sm">
     <thead class="table-light">
@@ -139,7 +148,14 @@
 
 </table>
 
-
+<script>
+    $(".alert-box:contains('failed')").addClass('failure')
+    $(".alert-box:contains('updated')").addClass('success')
+    $(".alert-box:contains('deleted')").addClass('warning')
+    $("div.success").fadeIn(300).delay(4500).fadeTo(400, 0);
+    $("div.failure").fadeIn(300).delay(1500).fadeTo(400, 0);
+    $("div.warning").fadeIn(300).delay(1500).fadeTo(400, 0);
+</script>
 
 
 {% endblock page_content %}
