@@ -189,7 +189,7 @@ def reset():
     a2 = Assignment(prompt="He finished his breakfast early")
     a3 = Assignment(prompt="The flowers bloomed early this year")
     h1 = Homework(aId=2, lineId='f027k', file="/uploaded/zzz.wav")
-    entries = [s1, s2, s3, s4, a1, a2, a3, h1]
+    entries = [s1]
     db.session.add_all(entries)
     db.session.commit()
     return redirect('/showtables')
