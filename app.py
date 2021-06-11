@@ -42,11 +42,17 @@ class Homework(db.Model):
     # result from Azure
     label = db.Column(db.String(100))
 
+    def __repr__(self):
+        return f'[Assignment ID: {self.aId}, LINE: {self.lineId}, File: {self.file}, Submit Time: {self.submit_time}, label: {self.label}]'
+
 
 class Assignment(db.Model):
     __tablename__ = 'assignment'
     aId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     prompt = db.Column(db.String(100))
+
+    def __repr__(self):
+        return f'[Assignment ID: {self.aId}, Prompt: {self.prompt}]'
 
 
 @app.route('/')
@@ -66,7 +72,7 @@ def create():
             message = addStudent(sId, sName, lineId)
         elif tab_type == "homeworks":
             aId = request.form['h-aId']
-            lineId = request.form['h-sId']
+            lineId = request.form['h-lineId']
             file = request.form['h-file']
             label = request.form['h-label']
             message = addHomework(aId, lineId, file, label)
@@ -94,14 +100,18 @@ def remove_edit():
         edit_type = request.form['type']
         if edit_type == "student":
             edit_id = request.form['s-sId']
+            query = Student.query.get(edit_id)
         elif edit_type == "homework":
             edit_id = request.form['h-file']
+            query = Homework.query.get(edit_id)
         elif edit_type == "assignment":
             edit_id = request.form['a-aId']
-        return f"let's edit {edit_type} {edit_id}!"
-        # return render_template('edit-entry.html',
-        #                        page_header="Edit Entry",
-        #                        data=data)
+            query = Assignment.query.get(edit_id)
+        print(query)
+        return render_template('edit-entry.html',
+                               page_header=f"Edit {edit_type.capitalize()} Entry",
+                               data_type=edit_type,
+                               data=query)
 
 
 @app.route('/remove', methods=['POST'])
@@ -119,8 +129,28 @@ def remove():
 
 @app.route('/edit', methods=["POST"])
 def edit():
-    # execute db functions
-    return "oops"
+    edit_type = request.form['type']
+    if edit_type == "student":
+        sId = request.form['s-sId']
+        newId = request.form['new-sId']
+        newName = request.form['new-sName']
+        newLineId = request.form['new-lineId']
+        return updateStudent(sId, newId=newId, newName=newName,
+                             newLineId=newLineId)
+    elif edit_type == "homework":
+        file = request.form['h-file']
+        newaId = request.form['new-aId']
+        newLineId = request.form['new-lineId']
+        newFile = request.form['new-file']
+        newLabel = request.form['new-label']
+        return updateHomework(file, newaId=newaId, newLineId=newLineId, newFile=newFile, newLabel=newLabel)
+    elif edit_type == "assignment":
+        aId = request.form['a-aId']
+        newId = request.form['new-aId']
+        newPrompt = request.form['new-prompt']
+        return updateAssignment(aId, newId=newId, newPrompt=newPrompt)
+    else:
+        return "Something went wrong"
 
     # /makechange now deprecated can be cleaned up
 
@@ -235,37 +265,6 @@ def reset():
     return redirect('/showtables')
 
 
-# below are test URLs once again, will delete at a later point
-@app.route('/addstu')
-def addStu():
-    return addStudent(22, "Eve", "o147v")
-
-
-@app.route('/addhw')
-def addHw():
-    return addHomework(22, "a983g", "/uploaded/sss.wav", "mary")
-
-
-@app.route('/addass')
-def addAss():
-    return addAssignment("He went to Spain")
-
-
-@app.route('/delstu')
-def delStu():
-    return deleteStudent(2)
-
-
-@app.route('/delhw')
-def delHw():
-    return deleteHomework("/uploaded/sss.wav")
-
-
-@app.route('/delass')
-def delAss():
-    return deleteAssignment(2)
-
-
 def addStudent(sId, sName, lineId):
     entry = Student(sId=sId, sName=sName, lineId=lineId)
     try:
@@ -350,10 +349,47 @@ def updateStudent(sId, newId=None, newName=None, newLineId=None):
         return f"failed to find student {sId}"
 
 
-@app.route('/updatestu')
-def updateStu():
-    return updateStudent(1, newId=1, newName="Jim", newLineId="d848e")
-    # return updateStudent(1, newName="Jones")
+def updateHomework(file, newaId=None, newLineId=None, newFile=None, newLabel=None):
+    query = Homework.query.get(file)
+    olddata = query.__repr__()
+    if query:
+        if newaId:
+            query.aId = newaId
+        if newLineId:
+            query.lineId = newLineId
+        if newFile:
+            query.file = newFile
+        if newLabel:
+            query.label = newLabel
+        try:
+            db.session.commit()
+            newdata = query.__repr__()
+            return f"updated {olddata} to {newdata}"
+        except:
+            db.session.rollback()
+            return f"failed to update {olddata}"
+    else:
+        return f"failed to find homework {file}"
+
+
+def updateAssignment(aId, newId=None, newPrompt=None):
+    query = Assignment.query.get(aId)
+    olddata = query.__repr__()
+    if query:
+        if newId:
+            query.aId = newId
+        if newPrompt:
+            query.prompt = newPrompt
+            print(newPrompt)
+        try:
+            db.session.commit()
+            newdata = query.__repr__()
+            return f"updated {olddata} to {newdata}"
+        except:
+            db.session.rollback()
+            return f"failed to update {olddata}"
+    else:
+        return f"failed to find assignment {sId}"
 
 
 if __name__ == "__main__":
