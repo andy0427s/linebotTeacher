@@ -9,13 +9,14 @@
 {{ super() }}
 
 <h3>Students</h3>
-<table class="table table-light table-bordered">
-    <thead>
+<table class="table table-bordered table-sm">
+    <thead class="table-light">
         <tr>
-            <th>Student ID</th>
+            <th class="fit">Student ID</th>
             <th>Student Name</th>
             <th>LINE ID</th>
         </tr>
+    </thead>
     <tbody>
 
         {% for row in data['students'] %}
@@ -25,24 +26,23 @@
             <td>{{ row['lineId'] }}</td>
         </tr>
         {% endfor %}
-
     </tbody>
-    </thead>
+
 
 </table>
 
 <h3>Homeworks</h3>
-<table class="table table-light table-bordered">
-    <thead>
+<table class="table table-bordered table-sm">
+    <thead class="table-light">
         <tr>
-            <th>Assignment ID</th>
+            <th class="fit">Assignment ID</th>
             <th>LINE ID</th>
             <th>File location</th>
             <th>Submit time</th>
             <th>Label</th>
         </tr>
+    </thead>
     <tbody>
-
         {% for row in data['homeworks'] %}
         <tr>
             <td>{{ row['aId'] }}</td>
@@ -53,16 +53,16 @@
         </tr>
         {% endfor %}
     </tbody>
-    </thead>
 </table>
 
 <h3>Assignments</h3>
-<table class="table table-light table-bordered">
-    <thead>
+<table class="table table-bordered table-sm">
+    <thead class="table-light">
         <tr>
-            <th>Assignment ID</th>
+            <th class="fit">Assignment ID</th>
             <th>Prompt</th>
         </tr>
+    </thead>
     <tbody>
 
         {% for row in data['assignments'] %}
@@ -73,7 +73,7 @@
         {% endfor %}
 
     </tbody>
-    </thead>
+
 
 </table>
 
