@@ -23,7 +23,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 path_to_db = "/db/new.db"
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite://{path_to_db}'
 # app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://jymwsjbzlanqbt:bdf219a8a2653c2d6c6e226c90071b4b0093960241e4f8a60f63c170732a517c@ec2-54-243-92-68.compute-1.amazonaws.com:5432/d9f853hbcsdg12'
-#Use upper one for development, lower one for deployment, By Johnson
+# Use upper one for development, lower one for deployment, By Johnson
 db = SQLAlchemy(app)
 
 
@@ -158,57 +158,11 @@ def edit():
     flash(message)
     return redirect(url_for('remove_edit'))
 
-    # /makechange now deprecated can be cleaned up
-
-
-@app.route('/makechange')
-def makechange():
-    # make changes to table
-    return render_template('my-form.html')
-
-
-@app.route('/makechange', methods=['POST'])
-def makechange_post():
-    tab_type = request.form['table']
-    if tab_type == "students":
-        sid = request.form['sID']
-        sname = request.form['SName']
-        lineid = request.form['LID']
-        student = [Student(sId=sid, sName=sname, lineId=lineid)]
-        db.session.add_all(student)
-        msg = "Added data to students"
-    elif tab_type == "homeworks":
-        aid = request.form['aID']
-        lineid = request.form['LineID2']
-        floc = request.form['fLoc']
-        lab = request.form['Lab']
-        homework = [Homework(aId=aid, lineId=lineid, file=floc, label=lab)]
-        db.session.add_all(homework)
-        msg = "Added data to homeworks"
-    elif tab_type == "assignments":
-        aid = request.form['aID2']
-        pmt = request.form['pmt']
-        assignment = [Assignment(aId=aid, prompt=pmt)]
-        db.session.add_all(assignment)
-        msg = "Added data to assignments"
-    db.session.commit()
-    return msg
-
 
 @app.route('/review')
 def review():
     return render_template('review.html',
                            page_header="Review")
-
-
-@app.route('/students')
-def students():
-    results = Student.query.all()
-    # for i in results:
-    #     print(i.sId, i.sName, i.lineId)
-    return render_template('students.html',
-                           page_header="Students",
-                           data=results)
 
 
 @app.route('/showtables')
@@ -234,23 +188,6 @@ def clearData():
     # this drops all tables (not just rows)
     db.drop_all()
     return "tables dropped"
-
-
-@app.route('/adddata')
-def addData():
-    # create some dummy data
-    s1 = Student(sId=1, sName="Bob", lineId="e109bs")
-    s2 = Student(sId=2, sName="Alice", lineId="a983g")
-    s3 = Student(sId=3, sName="Charlie", lineId="f027k")
-    s4 = Student(sId=4, sName="Dylan", lineId="m410p")
-    students = [s1, s2, s3, s4]
-    db.session.add_all(students)
-    a1 = Assignment(prompt="go to the store")
-    h1 = Homework(aId=2, lineId='f027k', file="/uploaded/zzz.wav")
-    entries = [a1, h1]
-    db.session.add_all(entries)
-    db.session.commit()
-    return "added"
 
 
 @app.route('/reset')
