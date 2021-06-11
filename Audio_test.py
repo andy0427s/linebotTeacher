@@ -6,14 +6,21 @@ from flask_sqlalchemy import SQLAlchemy
 
 # import linebot related
 from linebot import (
-    LineBotApi, WebhookHandler
+    LineBotApi, WebhookHandler, WebhookParser
 )
 from linebot.exceptions import (
-    InvalidSignatureError
+    InvalidSignatureError, LineBotApiError
 )
+
+from linebot.models import *
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage, AudioMessage,
-    LocationSendMessage, ImageSendMessage, StickerSendMessage
+    MessageEvent,
+    TextSendMessage,
+    TemplateSendMessage,
+    ButtonsTemplate,
+    MessageTemplateAction,
+    PostbackEvent,
+    PostbackTemplateAction
 )
 
 import string, time, os
@@ -27,7 +34,6 @@ import base64
 import json
 import time
 import azure.cognitiveservices.speech as speechsdk
-
 
 # create flask server
 app = Flask(__name__)
@@ -54,34 +60,85 @@ def callback():
         abort(400)
     return 'OK'
 
-'''
-def transcribe(wav_path):
-    
-    # Speech to Text by Google free API
-    # language: en-US, zh-TW
-    
-    
-    r = sr.Recognizer()
-    with sr.AudioFile(wav_path) as source:
-        audio = r.record(source)
-    try:
-        return r.recognize_google(audio, language="en-US")
-    except sr.UnknownValueError:
-        print("Google Speech Recognition could not understand audio")
-    except sr.RequestError as e:
-        print("Could not request results from Google Speech Recognition service; {0}".format(e))
-    return None
-'''
     
 # 接收 LINE 的資訊 / 回傳相同資訊
 
+'''
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     get_message = event.message.text
 
     # Send To Line
-    reply = TextSendMessage(text=f"{get_message}")
-    line_bot_api.reply_message(event.reply_token, reply)
+    # reply = TextSendMessage(text=f"{get_message}")
+    # line_bot_api.reply_message(event.reply_token, reply)
+'''
+
+
+# Linebot 功能列(文字跟語音)
+
+@handler.add(MessageEvent, message=TextMessage)
+def handle_message(event):
+
+    msg = event.message.text
+    msg = msg.encode('utf-8') 
+    page_keyword = ['hi', 'back', 'main','Back','Main','Hi']
+    questions = str(list(range(101)))
+
+    # Send To Line
+    # reply = TextSendMessage(text=f"{get_message}")
+    # line_bot_api.reply_message(event.reply_token, reply)
+
+    # if event.message.text == "文字":
+    #     line_bot_api.reply_message(event.reply_token,TextSendMessage(text=event.message.text))
+
+   # LineBot 主選單
+    if event.message.text in page_keyword:
+        line_bot_api.reply_message(event.reply_token, TemplateSendMessage(alt_text='目錄 template',
+        template=ButtonsTemplate(
+            title='歡迎使用英語口說Linebot',
+            text='請選擇服務：',
+            thumbnail_image_url='https://powerlanguage.net/wp-content/uploads/2019/09/welcome-300x129.jpg', #圖片
+            actions=[
+                PostbackTemplateAction(
+                    label='上傳錄音',
+                    text='上傳錄音',
+                    data='A&上傳錄音'
+                ),
+                MessageTemplateAction(
+                    label='查看題庫',
+                    text='查看題庫',
+                    data='B&查看題庫'
+                ),
+                MessageTemplateAction(
+                    label='功能3',
+                    text='功能3',
+                    data='C&功能3'
+                ),
+                MessageTemplateAction(
+                    label='功能4',
+                    text='功能4',
+                    data='D&功能5'
+                )
+            ])))
+
+    # 學生選擇題目，需要和Azure指定題庫進行綁定
+    elif event.message.text in questions:
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"確認題目編號，請開始錄音!\n或輸入'back'返回主選單"))
+        saveid_hw = event.message.text # 題目編號for DB
+
+        while False:
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"無此題目編號，請重新輸入assignID\n或輸入'back'返回主選單"))
+            break
+
+
+# 主頁面-'上傳錄音'功能/ 學生選擇題目編號
+
+@handler.add(PostbackEvent)
+def handle_post_message(event):
+# can not get event text
+
+    if event.postback.data[0:1] == "A":
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='請輸入題庫assign ID：'))
 
 
 # Line錄音回傳功能 / 回傳mp3音檔至本機端 
@@ -96,8 +153,8 @@ def handle_audio(event):
     wavfile = now+audio_name+'.wav'
     txtfile = now+audio_name+'.txt'
 
-    path='./recording/'+mp3file  # mp3 file path 
-    path_wav='./recording_wav/'+wavfile # wav file path
+    path='./recording/'+mp3file  # mp3 file path for DB
+    path_wav='./recording_wav/'+wavfile # wav file path for DB
     path_txt='./text/'+txtfile # txt file path
 
     with open(path, 'wb') as fd:
@@ -107,6 +164,7 @@ def handle_audio(event):
     # mp3 to wav converter - ffmpeg in same path
     os.system('ffmpeg -y -i ' + path + ' ' + path_wav + ' -loglevel quiet')
 
+    
 
     '''
     # audio to txt converter 
@@ -152,7 +210,7 @@ def handle_audio(event):
                 break
             yield chunk
 
-    referenceText = 'Hello my name is Andy'  # input 指定題庫  
+    referenceText = 'Hello my name is Andy'  # input 指定題庫 from DB
     pronAssessmentParamsJson = "{\"ReferenceText\":\"%s\",\"GradingSystem\":\"HundredMark\",\"Dimension\":\"Comprehensive\"}" % referenceText
     pronAssessmentParamsBase64 = base64.b64encode(bytes(pronAssessmentParamsJson, 'utf-8'))
     pronAssessmentParams = str(pronAssessmentParamsBase64, "utf-8")
@@ -171,7 +229,7 @@ def handle_audio(event):
     # create txt file for result storage
     result_name = '_final_result'
     result_file = now+result_name+'.txt'
-    path_result='./text/'+result_file # txt file path
+    path_result='./text/'+result_file # result file path for DB
 
     # input wav file 
 
@@ -193,14 +251,18 @@ def handle_audio(event):
 
     if resultJson == None:
         print('Azure did not understand the sound, please try again')
-    
+        line_bot_api.reply_message(
+        event.reply_token, TextSendMessage(text='辨認音檔失敗，請重新錄製，或輸入"back"返回主選單'))
+        os.remove(path)
+        os.remove(path_wav)
+
     else:
         print('Successful Uploading for result')
-
+        line_bot_api.reply_message(
+        event.reply_token, TextSendMessage(text='辨認音檔成功，可以繼續錄製，或輸入"back"返回主選單'))
         with open(path_result, 'w') as fr:
             fr.write(json.dumps(resultJson, indent=4))
             fr.close()
-
 
 
 # add txt file(audio) to database 
