@@ -3,8 +3,6 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
 
-# from sqlalchemy.orm import query
-
 # main goal:
 # provide a platform for teachers to interact with a SQL database containing student assignments
 # allow teachers to give new assignments
@@ -12,7 +10,6 @@ import os
 
 # Todo:
 # move functions to separate file?
-# clean up pages
 
 
 app = Flask(__name__)
@@ -42,7 +39,8 @@ class Homework(db.Model):
     aId = db.Column(db.Integer, nullable=False)
     lineId = db.Column(db.Integer, nullable=False)
     file = db.Column(db.String(50), primary_key=True)
-    submit_time = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    submit_time = db.Column(db.DateTime, nullable=False,
+                            default=datetime.now().replace(microsecond=0))
     # result from Azure
     label = db.Column(db.String(100))
 
@@ -213,10 +211,10 @@ def addStudent(sId, sName, lineId):
     try:
         db.session.add(entry)
         db.session.commit()
-        return f"added student {sName}!"
+        return f"added student {entry}!"
     except:
         db.session.rollback()
-        return f"failed to add student {sName}"
+        return f"failed to add student {entry}"
 
 
 def addHomework(aId, lineId, file, label=None):
@@ -224,10 +222,10 @@ def addHomework(aId, lineId, file, label=None):
     try:
         db.session.add(entry)
         db.session.commit()
-        return f"added homework {file}!"
+        return f"added homework {entry}!"
     except:
         db.session.rollback()
-        return f"failed to add homework {file}"
+        return f"failed to add homework {entry}"
 
 
 def addAssignment(prompt):
@@ -235,7 +233,7 @@ def addAssignment(prompt):
     entry = Assignment(prompt=prompt)
     db.session.add(entry)
     db.session.commit()
-    return f"added assignment {prompt}!"
+    return f"added assignment {entry}!"
 
 
 def deleteStudent(sId):
@@ -243,7 +241,7 @@ def deleteStudent(sId):
     try:
         db.session.delete(query)
         db.session.commit()
-        return f"deleted student {sId}"
+        return f"deleted student {query}"
     except:
         db.session.rollback()
         return f"failed to delete student {sId}"
@@ -254,7 +252,7 @@ def deleteHomework(file):
     try:
         db.session.delete(query)
         db.session.commit()
-        return f"deleted homework {file}"
+        return f"deleted homework {query}"
     except:
         db.session.rollback()
         return f"failed to delete homework {file}"
@@ -265,7 +263,7 @@ def deleteAssignment(aId):
     try:
         db.session.delete(query)
         db.session.commit()
-        return f"deleted assignment {aId}"
+        return f"deleted assignment {query}"
     except:
         db.session.rollback()
         return f"failed to delete assignment {aId}"
