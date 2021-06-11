@@ -77,10 +77,10 @@ def makechange_post():
         msg = "Added data to students"
     elif tab_type == "homeworks":
         aid = request.form['aID']
-        aaa = request.form['sID2']
+        lineid = request.form['LineID2']
         floc = request.form['fLoc']
         lab = request.form['Lab']
-        homework = [Homework(aId=aid, sId=aaa, file=floc, label=lab)]
+        homework = [Homework(aId=aid, lineId=lineid, file=floc, label=lab)]
         db.session.add_all(homework)
         msg = "Added data to homeworks"
     elif tab_type == "assignments":
