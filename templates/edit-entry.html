@@ -1,0 +1,143 @@
+{% extends "parts/base.html" %}
+
+{% block title %}Edit{% endblock title %}
+{% block scripts %}
+{{ super() }}
+
+{% endblock scripts %}
+
+{% block page_content %}
+{{ super() }}
+
+
+{% if data_type=='student'%}
+<table class="table table-bordered table-sm">
+    <thead class="table-light">
+        <tr>
+            <th class="fit">Student ID</th>
+            <th>Student Name</th>
+            <th>LINE ID</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ data['sId'] }}</td>
+            <td>{{ data['sName'] }}</td>
+            <td>{{ data['lineId'] }}</td>
+        </tr>
+    </tbody>
+</table>
+
+{% elif data_type=='homework' %}
+<table class="table table-bordered table-sm">
+    <thead class="table-light">
+        <tr>
+            <th class="fit">Assignment ID</th>
+            <th>LINE ID</th>
+            <th>File location</th>
+            <th>Submit time</th>
+            <th>Label</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ data['aId'] }}</td>
+            <td>{{ data['lineId'] }}</td>
+            <td>{{ data['file'] }}</td>
+            <td>{{ data['submit_time'] }}</td>
+            <td>{{ data['label'] }}</td>
+        </tr>
+    </tbody>
+</table>
+
+{% elif data_type=='assignment' %}
+<table class="table table-bordered table-sm">
+    <thead class="table-light">
+        <tr>
+            <th class="fit">Assignment ID</th>
+            <th>Prompt</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ data['aId'] }}</td>
+            <td>{{ data['prompt'] }}</td>
+        </tr>
+    </tbody>
+</table>
+
+{% endif %}
+
+<form method="POST" action="/edit">
+    {% if data_type=='student' %}
+    <div class="student-form">
+        <input type="hidden" name="type" value="student">
+        <input type="hidden" name="s-sId" value="{{ data.sId }}">
+        <div class="mb-3">
+            <label for="new-sId" class="form-label">Student ID</label>
+            <input type="text" class="form-control" id="new-sId" name="new-sId" placeholder='{{ data.sId }}' value='{{ data.sId
+                }}'>
+        </div>
+        <div class="mb-3">
+            <label for="new-sName" class="form-label">Student Name</label>
+            <input type="text" class="form-control" id="new-sName" name="new-sName" placeholder='{{ data.sName }}'
+                value='{{
+                data.sName }}'>
+        </div>
+        <div class="mb-3">
+            <label for="new-lineId" class="form-label">LINE ID</label>
+            <input type="text" class="form-control" id="new-lineId" name="new-lineId" placeholder='{{ data.lineId }}'
+                value='{{
+                data.lineId }}'>
+        </div>
+    </div>
+
+    {% elif data_type=='homework' %}
+    <div class="homework-form">
+        <input type="hidden" name="type" value="homework">
+        <input type="hidden" name="h-file" value="{{ data.file }}">
+        <div class="mb-3">
+            <label for="new-aId" class="form-label">Assignment ID</label>
+            <input type="text" class="form-control" id="new-aId" name="new-aId" placeholder={{ data.aId }} value='{{ data.aId
+                }}'>
+        </div>
+        <div class="mb-3">
+            <label for="new-lineId" class="form-label">LINE ID</label>
+            <input type="text" class="form-control" id="new-lineId" name="new-lineId" placeholder='{{ data.lineId }}'
+                value='{{
+                data.lineId }}'>
+        </div>
+        <div class="mb-3">
+            <label for="new-file" class="form-label">File Location</label>
+            <input type="text" class="form-control" id="new-file" name="new-file" placeholder='{{ data.file }}' value='{{
+                data.file }}'>
+        </div>
+        <div class="mb-3">
+            <label for="new-label" class="form-label">Label</label>
+            <input type="text" class="form-control" id="new-label" name="new-label" placeholder='{{ data.label }}'
+                value='{{
+                data.label }}'>
+        </div>
+    </div>
+
+    {% elif data_type=='assignment'%}
+    <div class="assignment-form">
+        <input type="hidden" name="type" value="assignment">
+        <input type="hidden" name="a-aId" value="{{ data.aId }}">
+        <div class="mb-3">
+            <label for="new-aId" class="form-label">Assignment ID</label>
+            <input type="text" class="form-control" id="new-aId" name="new-aId" placeholder='{{ data.aId }}' value='{{ data.aId
+                }}'>
+        </div>
+        <div class="mb-3">
+            <label for="new-prompt" class="form-label">Prompt</label>
+            <input type="text" class="form-control" id="new-prompt" name="new-prompt" placeholder='{{ data.prompt }}'
+                value='{{
+                data.prompt }}'>
+        </div>
+    </div>
+
+    {% endif %}
+    <input class="btn btn-primary" type="submit" value="Submit">
+</form>
+{% endblock page_content %}
