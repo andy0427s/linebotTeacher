@@ -9,12 +9,14 @@
 {{ super() }}
 
 <h3>Students</h3>
-<table class="table table-light table-bordered">
+<table class="table table-light table-bordered table-hover">
     <thead>
         <tr>
-            <th>Student ID</th>
+            <th class="fit">Student ID</th>
             <th>Student Name</th>
             <th>LINE ID</th>
+            <th class="fit">Edit</th>
+            <th class="fit">Delete</th>
         </tr>
     <tbody>
 
@@ -23,6 +25,17 @@
             <td>{{ row['sId'] }}</td>
             <td>{{ row['sName'] }}</td>
             <td>{{ row['lineId'] }}</td>
+            <td><i class="bi bi-pencil"></i></td>
+            <td>
+                <form method="POST" action="/remove">
+                    <input type="hidden" name="type" value="student">
+                    <input type="hidden" name="s-sId" value="{{ row['sId'] }}">
+                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </form>
+
+            </td>
         </tr>
         {% endfor %}
 
@@ -32,14 +45,16 @@
 </table>
 
 <h3>Homeworks</h3>
-<table class="table table-light table-bordered">
+<table class="table table-light table-bordered table-hover">
     <thead>
         <tr>
-            <th>Assignment ID</th>
+            <th class="fit">Assignment ID</th>
             <th>LINE ID</th>
             <th>File location</th>
             <th>Submit time</th>
             <th>Label</th>
+            <th class="fit">Edit</th>
+            <th class="fit">Delete</th>
         </tr>
     <tbody>
 
@@ -50,6 +65,17 @@
             <td>{{ row['file'] }}</td>
             <td>{{ row['submit_time'] }}</td>
             <td>{{ row['label'] }}</td>
+            <td><i class="bi bi-pencil"></i></td>
+            <td>
+                <form method="POST" action="/remove">
+                    <input type="hidden" name="type" value="homework">
+                    <input type="hidden" name="h-file" value="{{ row['file'] }}">
+                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </form>
+
+            </td>
         </tr>
         {% endfor %}
     </tbody>
@@ -57,13 +83,13 @@
 </table>
 
 <h3>Assignments</h3>
-<table class="table table-light table-bordered">
+<table class="table table-light table-bordered table-hover">
     <thead>
         <tr>
-            <th>Assignment ID</th>
+            <th class="fit">Assignment ID</th>
             <th>Prompt</th>
-            <th>Edit</th>
-            <th>Delete</th>
+            <th class="fit">Edit</th>
+            <th class="fit">Delete</th>
         </tr>
     <tbody>
 
@@ -74,6 +100,7 @@
             <td><i class="bi bi-pencil"></i></td>
             <td>
                 <form method="POST" action="/remove">
+                    <input type="hidden" name="type" value="assignment">
                     <input type="hidden" name="a-aId" value="{{ row['aId'] }}">
                     <button type="submit" class="btn btn-outline-danger btn-sm">
                         <i class="bi bi-trash"></i>
