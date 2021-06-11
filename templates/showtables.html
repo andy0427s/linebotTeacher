@@ -16,6 +16,7 @@
             <th>Student Name</th>
             <th>LINE ID</th>
         </tr>
+    </thead>
     <tbody>
 
         {% for row in data['students'] %}
@@ -25,9 +26,8 @@
             <td>{{ row['lineId'] }}</td>
         </tr>
         {% endfor %}
-
     </tbody>
-    </thead>
+
 
 </table>
 
@@ -41,8 +41,8 @@
             <th>Submit time</th>
             <th>Label</th>
         </tr>
+    </thead>
     <tbody>
-
         {% for row in data['homeworks'] %}
         <tr>
             <td>{{ row['aId'] }}</td>
@@ -53,7 +53,6 @@
         </tr>
         {% endfor %}
     </tbody>
-    </thead>
 </table>
 
 <h3>Assignments</h3>
@@ -63,6 +62,7 @@
             <th class="fit">Assignment ID</th>
             <th>Prompt</th>
         </tr>
+    </thead>
     <tbody>
 
         {% for row in data['assignments'] %}
@@ -73,7 +73,7 @@
         {% endfor %}
 
     </tbody>
-    </thead>
+
 
 </table>
 
