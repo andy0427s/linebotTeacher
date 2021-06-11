@@ -58,7 +58,6 @@ def index():
 @app.route('/create', methods=['GET', 'POST'])
 def create():
     if request.form:
-        print(request.form)
         tab_type = request.form['table']
         if tab_type == "students":
             sId = request.form['s-sId']
@@ -79,6 +78,26 @@ def create():
                                message=message)
     return render_template('create.html',
                            page_header="Add Data to Table")
+
+
+@app.route('/remove-and-edit', methods=['GET', 'POST'])
+def remove_edit():
+    results = {}
+    results['students'] = Student.query.all()
+    results['homeworks'] = Homework.query.all()
+    results['assignments'] = Assignment.query.all()
+    return render_template('remove-and-edit.html',
+                           page_header="Remove or Edit Rows",
+                           data=results)
+
+
+@app.route('/remove', methods=['POST'])
+def remove():
+    if request.form:
+        if request.form['a-aId']:
+            deleteAssignment(request.form['a-aId'])
+
+    return redirect('/remove-and-edit')
 
 
 # /makechange now deprecated can be cleaned up

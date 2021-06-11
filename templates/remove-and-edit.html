@@ -72,7 +72,15 @@
             <td>{{ row['aId'] }}</td>
             <td>{{ row['prompt'] }}</td>
             <td><i class="bi bi-pencil"></i></td>
-            <td><i class="bi bi-trash"></i></td>
+            <td>
+                <form method="POST" action="/remove">
+                    <input type="hidden" name="a-aId" value="{{ row['aId'] }}">
+                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </form>
+
+            </td>
         </tr>
         {% endfor %}
 
