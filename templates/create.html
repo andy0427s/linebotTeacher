@@ -11,6 +11,13 @@
 
 <body>
 
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert-box">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
     <form method="POST">
         <div>
             <label for="table" class="form-label">Table Name</label>
@@ -44,8 +51,9 @@
                         required>
                 </div>
                 <div class="mb-3">
-                    <label for="h-sId" class="form-label">Student ID</label>
-                    <input type="text" class="form-control" id="h-sId" name="h-sId" placeholder="Student ID.." required>
+                    <label for="h-sId" class="form-label">LINE ID</label>
+                    <input type="text" class="form-control" id="h-lineId" name="h-lineId" placeholder="LINE ID.."
+                        required>
                 </div>
                 <div class="mb-3">
                     <label for="h-file" class="form-label">File Location</label>
@@ -100,8 +108,10 @@
             }
         });
 
-
-
+        $(".alert-box:contains('failed')").addClass('failure')
+        $(".alert-box:contains('added')").addClass('success')
+        $("div.success").fadeIn(300).delay(3000).fadeTo(400, 0);
+        $("div.failure").fadeIn(300).delay(1500).fadeTo(400, 0);
     </script>
     </form>
 

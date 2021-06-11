@@ -1,9 +1,7 @@
-from flask import Flask, render_template, url_for, request, redirect
+from flask import Flask, render_template, url_for, request, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
-
-# from sqlalchemy.orm import query
 
 # main goal:
 # provide a platform for teachers to interact with a SQL database containing student assignments
@@ -12,17 +10,17 @@ import os
 
 # Todo:
 # move functions to separate file?
-# clean up pages
 
 
 app = Flask(__name__)
+app.secret_key = 'secretkeyzzz'
 
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 path_to_db = "/db/new.db"
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite://{path_to_db}'
 # app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://jymwsjbzlanqbt:bdf219a8a2653c2d6c6e226c90071b4b0093960241e4f8a60f63c170732a517c@ec2-54-243-92-68.compute-1.amazonaws.com:5432/d9f853hbcsdg12'
-#Use upper one for development, lower one for deployment, By Johnson
+# Use upper one for development, lower one for deployment, By Johnson
 db = SQLAlchemy(app)
 
 
@@ -41,15 +39,22 @@ class Homework(db.Model):
     aId = db.Column(db.Integer, nullable=False)
     lineId = db.Column(db.String, nullable=False)
     file = db.Column(db.String(50), primary_key=True)
-    submit_time = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    submit_time = db.Column(db.DateTime, nullable=False,
+                            default=datetime.now().replace(microsecond=0))
     # result from Azure
     label = db.Column(db.String(100))
+
+    def __repr__(self):
+        return f'[Assignment ID: {self.aId}, LINE: {self.lineId}, File: {self.file}, Submit Time: {self.submit_time}, label: {self.label}]'
 
 
 class Assignment(db.Model):
     __tablename__ = 'assignment'
     aId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     prompt = db.Column(db.String(100))
+
+    def __repr__(self):
+        return f'[Assignment ID: {self.aId}, Prompt: {self.prompt}]'
 
 
 @app.route('/')
@@ -61,7 +66,6 @@ def index():
 @app.route('/create', methods=['GET', 'POST'])
 def create():
     if request.form:
-        print(request.form)
         tab_type = request.form['table']
         if tab_type == "students":
             sId = request.form['s-sId']
@@ -70,69 +74,93 @@ def create():
             message = addStudent(sId, sName, lineId)
         elif tab_type == "homeworks":
             aId = request.form['h-aId']
-            lineId = request.form['h-sId']
+            lineId = request.form['h-lineId']
             file = request.form['h-file']
             label = request.form['h-label']
             message = addHomework(aId, lineId, file, label)
         elif tab_type == "assignments":
             prompt = request.form['a-prompt']
             message = addAssignment(prompt)
-        return render_template('create.html',
-                               page_header="Add Data to Table",
-                               message=message)
+        flash(message)
     return render_template('create.html',
                            page_header="Add Data to Table")
 
 
-# /makechange now deprecated can be cleaned up
-@app.route('/makechange')
-def makechange():
-    # make changes to table
-    return render_template('my-form.html')
+@app.route('/remove-and-edit', methods=['GET', 'POST'])
+def remove_edit():
+    if request.method == "GET":
+        results = {}
+        results['students'] = Student.query.all()
+        results['homeworks'] = Homework.query.all()
+        results['assignments'] = Assignment.query.all()
+        return render_template('remove-and-edit.html',
+                               page_header="Remove or Edit Rows",
+                               data=results)
+    if request.method == "POST":
+        edit_type = request.form['type']
+        if edit_type == "student":
+            edit_id = request.form['s-sId']
+            query = Student.query.get(edit_id)
+        elif edit_type == "homework":
+            edit_id = request.form['h-file']
+            query = Homework.query.get(edit_id)
+        elif edit_type == "assignment":
+            edit_id = request.form['a-aId']
+            query = Assignment.query.get(edit_id)
+        print(query)
+        return render_template('edit-entry.html',
+                               page_header=f"Edit {edit_type.capitalize()} Entry",
+                               data_type=edit_type,
+                               data=query)
 
 
-@app.route('/makechange', methods=['POST'])
-def makechange_post():
-    tab_type = request.form['table']
-    if tab_type == "students":
-        sid = request.form['sID']
-        sname = request.form['SName']
-        lineid = request.form['LID']
-        student = [Student(sId=sid, sName=sname, lineId=lineid)]
-        db.session.add_all(student)
-        msg = "Added data to students"
-    elif tab_type == "homeworks":
-        aid = request.form['aID']
-        lineid = request.form['LineID2']
-        floc = request.form['fLoc']
-        lab = request.form['Lab']
-        homework = [Homework(aId=aid, lineId=lineid, file=floc, label=lab)]
-        db.session.add_all(homework)
-        msg = "Added data to homeworks"
-    elif tab_type == "assignments":
-        aid = request.form['aID2']
-        pmt = request.form['pmt']
-        assignment = [Assignment(aId=aid, prompt=pmt)]
-        db.session.add_all(assignment)
-        msg = "Added data to assignments"
-    db.session.commit()
-    return msg
+@app.route('/remove', methods=['POST'])
+def remove():
+    if request.form:
+        remove_type = request.form['type']
+        if remove_type == "student":
+            message = deleteStudent(request.form['s-sId'])
+        elif remove_type == "homework":
+            message = deleteHomework(request.form['h-file'])
+        elif remove_type == "assignment":
+            message = deleteAssignment(request.form['a-aId'])
+    flash(message)
+    return redirect(url_for('remove_edit'))
+
+
+@app.route('/edit', methods=["POST"])
+def edit():
+    edit_type = request.form['type']
+    if edit_type == "student":
+        sId = request.form['s-sId']
+        newId = request.form['new-sId']
+        newName = request.form['new-sName']
+        newLineId = request.form['new-lineId']
+        message = updateStudent(sId, newId=newId, newName=newName,
+                                newLineId=newLineId)
+    elif edit_type == "homework":
+        file = request.form['h-file']
+        newaId = request.form['new-aId']
+        newLineId = request.form['new-lineId']
+        newFile = request.form['new-file']
+        newLabel = request.form['new-label']
+        message = updateHomework(
+            file, newaId=newaId, newLineId=newLineId, newFile=newFile, newLabel=newLabel)
+    elif edit_type == "assignment":
+        aId = request.form['a-aId']
+        newId = request.form['new-aId']
+        newPrompt = request.form['new-prompt']
+        message = updateAssignment(aId, newId=newId, newPrompt=newPrompt)
+    else:
+        message = "Something went wrong"
+    flash(message)
+    return redirect(url_for('remove_edit'))
 
 
 @app.route('/review')
 def review():
     return render_template('review.html',
                            page_header="Review")
-
-
-@app.route('/students')
-def students():
-    results = Student.query.all()
-    # for i in results:
-    #     print(i.sId, i.sName, i.lineId)
-    return render_template('students.html',
-                           page_header="Students",
-                           data=results)
 
 
 @app.route('/showtables')
@@ -160,23 +188,6 @@ def clearData():
     return "tables dropped"
 
 
-@app.route('/adddata')
-def addData():
-    # create some dummy data
-    s1 = Student(sId=1, sName="Bob", lineId="e109bs")
-    s2 = Student(sId=2, sName="Alice", lineId="a983g")
-    s3 = Student(sId=3, sName="Charlie", lineId="f027k")
-    s4 = Student(sId=4, sName="Dylan", lineId="m410p")
-    students = [s1, s2, s3, s4]
-    db.session.add_all(students)
-    # a1 = Assignment(prompt="go to the store")
-    # h1 = Homework(aId=2, lineId='f027k', file="/uploaded/zzz.wav")
-    # entries = [a1, h1]
-    # db.session.add_all(entries)
-    db.session.commit()
-    return "added"
-
-
 @app.route('/reset')
 def reset():
     db.drop_all()
@@ -195,46 +206,15 @@ def reset():
     return redirect('/showtables')
 
 
-# below are test URLs once again, will delete at a later point
-@app.route('/addstu')
-def addStu():
-    return addStudent(22, "Eve", "o147v")
-
-
-@app.route('/addhw')
-def addHw():
-    return addHomework(22, "a983g", "/uploaded/sss.wav", "mary")
-
-
-@app.route('/addass')
-def addAss():
-    return addAssignment("He went to Spain")
-
-
-@app.route('/delstu')
-def delStu():
-    return deleteStudent(2)
-
-
-@app.route('/delhw')
-def delHw():
-    return deleteHomework("/uploaded/sss.wav")
-
-
-@app.route('/delass')
-def delAss():
-    return deleteAssignment(2)
-
-
 def addStudent(sId, sName, lineId):
     entry = Student(sId=sId, sName=sName, lineId=lineId)
     try:
         db.session.add(entry)
         db.session.commit()
-        return f"added student {sName}!"
+        return f"added student {entry}!"
     except:
         db.session.rollback()
-        return f"failed to add student {sName}"
+        return f"failed to add student {entry}"
 
 
 def addHomework(aId, lineId, file, label=None):
@@ -242,10 +222,10 @@ def addHomework(aId, lineId, file, label=None):
     try:
         db.session.add(entry)
         db.session.commit()
-        return f"added homework {file}!"
+        return f"added homework {entry}!"
     except:
         db.session.rollback()
-        return f"failed to add homework {file}"
+        return f"failed to add homework {entry}"
 
 
 def addAssignment(prompt):
@@ -253,7 +233,7 @@ def addAssignment(prompt):
     entry = Assignment(prompt=prompt)
     db.session.add(entry)
     db.session.commit()
-    return f"added assignment {prompt}!"
+    return f"added assignment {entry}!"
 
 
 def deleteStudent(sId):
@@ -261,7 +241,7 @@ def deleteStudent(sId):
     try:
         db.session.delete(query)
         db.session.commit()
-        return f"deleted student {sId}"
+        return f"deleted student {query}"
     except:
         db.session.rollback()
         return f"failed to delete student {sId}"
@@ -272,7 +252,7 @@ def deleteHomework(file):
     try:
         db.session.delete(query)
         db.session.commit()
-        return f"deleted homework {file}"
+        return f"deleted homework {query}"
     except:
         db.session.rollback()
         return f"failed to delete homework {file}"
@@ -283,7 +263,7 @@ def deleteAssignment(aId):
     try:
         db.session.delete(query)
         db.session.commit()
-        return f"deleted assignment {aId}"
+        return f"deleted assignment {query}"
     except:
         db.session.rollback()
         return f"failed to delete assignment {aId}"
@@ -302,7 +282,7 @@ def updateStudent(sId, newId=None, newName=None, newLineId=None):
         try:
             db.session.commit()
             newdata = query.__repr__()
-            return f"updated {olddata} to {newdata}"
+            return f"updated {newdata}!"
         except:
             db.session.rollback()
             return f"failed to update {olddata}"
@@ -310,10 +290,47 @@ def updateStudent(sId, newId=None, newName=None, newLineId=None):
         return f"failed to find student {sId}"
 
 
-@app.route('/updatestu')
-def updateStu():
-    return updateStudent(1, newId=1, newName="Jim", newLineId="d848e")
-    # return updateStudent(1, newName="Jones")
+def updateHomework(file, newaId=None, newLineId=None, newFile=None, newLabel=None):
+    query = Homework.query.get(file)
+    olddata = query.__repr__()
+    if query:
+        if newaId:
+            query.aId = newaId
+        if newLineId:
+            query.lineId = newLineId
+        if newFile:
+            query.file = newFile
+        if newLabel:
+            query.label = newLabel
+        try:
+            db.session.commit()
+            newdata = query.__repr__()
+            return f"updated {newdata}!"
+        except:
+            db.session.rollback()
+            return f"failed to update {olddata}"
+    else:
+        return f"failed to find homework {file}"
+
+
+def updateAssignment(aId, newId=None, newPrompt=None):
+    query = Assignment.query.get(aId)
+    olddata = query.__repr__()
+    if query:
+        if newId:
+            query.aId = newId
+        if newPrompt:
+            query.prompt = newPrompt
+            print(newPrompt)
+        try:
+            db.session.commit()
+            newdata = query.__repr__()
+            return f"updated {newdata}!"
+        except:
+            db.session.rollback()
+            return f"failed to update {olddata}"
+    else:
+        return f"failed to find assignment {sId}"
 
 
 if __name__ == "__main__":
