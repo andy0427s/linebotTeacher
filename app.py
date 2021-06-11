@@ -19,9 +19,9 @@ app = Flask(__name__)
 
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-path_to_db = "/db/new.db"
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite://{path_to_db}'
-# app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://jymwsjbzlanqbt:bdf219a8a2653c2d6c6e226c90071b4b0093960241e4f8a60f63c170732a517c@ec2-54-243-92-68.compute-1.amazonaws.com:5432/d9f853hbcsdg12'
+# path_to_db = "/db/new.db"
+# app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite://{path_to_db}'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://jymwsjbzlanqbt:bdf219a8a2653c2d6c6e226c90071b4b0093960241e4f8a60f63c170732a517c@ec2-54-243-92-68.compute-1.amazonaws.com:5432/d9f853hbcsdg12'
 #Use upper one for development, lower one for deployment, By Johnson
 db = SQLAlchemy(app)
 
@@ -169,10 +169,10 @@ def addData():
     s4 = Student(sId=4, sName="Dylan", lineId="m410p")
     students = [s1, s2, s3, s4]
     db.session.add_all(students)
-    a1 = Assignment(prompt="go to the store")
-    h1 = Homework(aId=2, lineId='f027k', file="/uploaded/zzz.wav")
-    entries = [a1, h1]
-    db.session.add_all(entries)
+    # a1 = Assignment(prompt="go to the store")
+    # h1 = Homework(aId=2, lineId='f027k', file="/uploaded/zzz.wav")
+    # entries = [a1, h1]
+    # db.session.add_all(entries)
     db.session.commit()
     return "added"
 
