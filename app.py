@@ -1,7 +1,7 @@
 from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-
+import os
 # from sqlalchemy.orm import query
 
 # main goal:
@@ -17,9 +17,10 @@ from datetime import datetime
 app = Flask(__name__)
 
 
-path_to_db = "/db/new.db"
+# path_to_db = "/db/new.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite://{path_to_db}'
+# app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite://{path_to_db}'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 db = SQLAlchemy(app)
 
 
