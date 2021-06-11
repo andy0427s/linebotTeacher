@@ -1,14 +1,108 @@
 {% extends "parts/base.html" %}
 
-{% block title %}review{% endblock title %}
+{% block title %}Create{% endblock title %}
 {% block scripts %}
 {{ super() }}
-<script src="{{ url_for('static', filename='jquery/jquery-3.5.1.min.js') }}"></script>
+
 {% endblock scripts %}
 
 {% block page_content %}
 {{ super() }}
-<p>Create Assignment</p>
+
+<body>
+
+    <form method="POST">
+        <div>
+            <label for="table" class="form-label">Table Name</label>
+            <select class="form-select" id="table" name="table">
+                <option value="students">Students</option>
+                <option value="homeworks">Homeworks</option>
+                <option value="assignments">Assignments</option>
+            </select>
+
+            <div class="student-form">
+                <div class="mb-3">
+                    <label for="s-sId" class="form-label">Student ID</label>
+                    <input type="text" class="form-control" id="s-sId" name="s-sId" placeholder="Student ID.." required>
+                </div>
+                <div class="mb-3">
+                    <label for="s-sName" class="form-label">Student Name</label>
+                    <input type="text" class="form-control" id="s-sName" name="s-sName" placeholder="Student Name.."
+                        required>
+                </div>
+                <div class="mb-3">
+                    <label for="s-lineId" class="form-label">LINE ID</label>
+                    <input type="text" class="form-control" id="s-lineId" name="s-lineId" placeholder="LINE ID.."
+                        required>
+                </div>
+            </div>
+
+            <div class="homework-form" style="display:none;">
+                <div class="mb-3">
+                    <label for="h-aId" class="form-label">Assignment ID</label>
+                    <input type="text" class="form-control" id="h-aId" name="h-aId" placeholder="Assignment ID.."
+                        required>
+                </div>
+                <div class="mb-3">
+                    <label for="h-sId" class="form-label">Student ID</label>
+                    <input type="text" class="form-control" id="h-sId" name="h-sId" placeholder="Student ID.." required>
+                </div>
+                <div class="mb-3">
+                    <label for="h-file" class="form-label">File Location</label>
+                    <input type="text" class="form-control" id="h-file" name="h-file" placeholder="File Location.."
+                        required>
+                </div>
+                <div class="mb-3">
+                    <label for="h-label" class="form-label">Label</label>
+                    <input type="text" class="form-control" id="h-label" name="h-label" placeholder="Label..">
+                </div>
+            </div>
+
+            <div class="assignment-form" style="display:none;">
+                <div class="mb-3">
+                    <label for="a-prompt" class="form-label">Prompt</label>
+                    <input type="text" class="form-control" id="a-prompt" name="a-prompt" placeholder="Prompt.."
+                        required>
+                </div>
+            </div>
+
+            <input class="btn btn-primary" type="submit" value="Submit">
+    </form>
+
+    {% if message %}
+    <div class="mt-3">
+        <p>{{ message }}</p>
+    </div>
+    {% endif %}
 
 
-{% endblock page_content %}
+
+    <script>
+        $('input:text').prop('disabled', true);
+        $(".student-form input").prop('disabled', false);
+        $('#table').change(function () {
+            // console.log($(this).val());
+            var val = $(this).val();
+            if (val === "students") {
+                $(".student-form").show().find('input').prop('disabled', false);
+                $(".homework-form").hide().find('input').prop('disabled', true);
+                $(".assignment-form").hide().find('input').prop('disabled', true);
+            }
+            if (val === "homeworks") {
+                $(".student-form").hide().find('input').prop('disabled', true);
+                $(".homework-form").show().find('input').prop('disabled', false);
+                $(".assignment-form").hide().find('input').prop('disabled', true);
+            }
+            if (val === "assignments") {
+                $(".student-form").hide().find('input').prop('disabled', true);
+                $(".homework-form").hide().find('input').prop('disabled', true);
+                $(".assignment-form").show().find('input').prop('disabled', false);
+            }
+        });
+
+
+
+    </script>
+    </form>
+
+    {% endblock page_content %}
