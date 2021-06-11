@@ -94,9 +94,13 @@ def remove_edit():
 @app.route('/remove', methods=['POST'])
 def remove():
     if request.form:
-        if request.form['a-aId']:
+        remove_type = request.form['type']
+        if remove_type == "student":
+            deleteStudent(request.form['s-sId'])
+        elif remove_type == "homework":
+            deleteHomework(request.form['h-file'])
+        elif remove_type == "assignment":
             deleteAssignment(request.form['a-aId'])
-
     return redirect('/remove-and-edit')
 
 
