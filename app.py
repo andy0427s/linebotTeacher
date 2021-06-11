@@ -82,13 +82,26 @@ def create():
 
 @app.route('/remove-and-edit', methods=['GET', 'POST'])
 def remove_edit():
-    results = {}
-    results['students'] = Student.query.all()
-    results['homeworks'] = Homework.query.all()
-    results['assignments'] = Assignment.query.all()
-    return render_template('remove-and-edit.html',
-                           page_header="Remove or Edit Rows",
-                           data=results)
+    if request.method == "GET":
+        results = {}
+        results['students'] = Student.query.all()
+        results['homeworks'] = Homework.query.all()
+        results['assignments'] = Assignment.query.all()
+        return render_template('remove-and-edit.html',
+                               page_header="Remove or Edit Rows",
+                               data=results)
+    if request.method == "POST":
+        edit_type = request.form['type']
+        if edit_type == "student":
+            edit_id = request.form['s-sId']
+        elif edit_type == "homework":
+            edit_id = request.form['h-file']
+        elif edit_type == "assignment":
+            edit_id = request.form['a-aId']
+        return f"let's edit {edit_type} {edit_id}!"
+        # return render_template('edit-entry.html',
+        #                        page_header="Edit Entry",
+        #                        data=data)
 
 
 @app.route('/remove', methods=['POST'])
@@ -104,7 +117,14 @@ def remove():
     return redirect('/remove-and-edit')
 
 
-# /makechange now deprecated can be cleaned up
+@app.route('/edit', methods=["POST"])
+def edit():
+    # execute db functions
+    return "oops"
+
+    # /makechange now deprecated can be cleaned up
+
+
 @app.route('/makechange')
 def makechange():
     # make changes to table
