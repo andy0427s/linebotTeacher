@@ -136,14 +136,14 @@ def handle_message(event):
             ])))
 
     # 學生選擇題目，需要和Azure指定題庫進行綁定
-    elif event.message.text in questions:
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"確認題目編號，請開始錄音!\n或輸入'back'返回主選單"))
-        saveid_hw = event.message.text # 題目編號for DB
 
-        while False:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"無此題目編號，請重新輸入assignID\n或輸入'back'返回主選單"))
-            break
-
+    if event.message.text.isdigit():
+        if event.message.text in questions:
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"確認題目編號，請開始錄音!\n或輸入'back'返回主選單"))
+            saveid_hw = event.message.text # 題目編號for DB
+        else:
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"無此題目編號，請重新輸入assignID，或輸入'back'返回主選單"))
+            
 
 # 主頁面-'上傳錄音'功能/ 學生選擇題目編號
 
@@ -151,8 +151,44 @@ def handle_message(event):
 def handle_post_message(event):
 # can not get event text
 
+    # call 主選單-錄音功能
     if event.postback.data[0:1] == "A":
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='請輸入題庫assign ID：'))
+
+    # call 圖文選單-主選單功能
+    if event.postback.data[0:1] == "E":
+        line_bot_api.reply_message(event.reply_token, TemplateSendMessage(alt_text='目錄 template',
+        template=ButtonsTemplate(
+            title='歡迎使用英語口說Linebot',
+            text='請選擇服務：',
+            thumbnail_image_url='https://powerlanguage.net/wp-content/uploads/2019/09/welcome-300x129.jpg', #圖片
+            actions=[
+                PostbackTemplateAction(
+                    label='上傳錄音',
+                    text='上傳錄音',
+                    data='A&上傳錄音'
+                ),
+                MessageTemplateAction(
+                    label='查看題庫',
+                    text='查看題庫',
+                    data='B&查看題庫'
+                ),
+                MessageTemplateAction(
+                    label='功能3',
+                    text='功能3',
+                    data='C&功能3'
+                ),
+                MessageTemplateAction(
+                    label='功能4',
+                    text='功能4',
+                    data='D&功能5'
+                )
+            ])))
+
+    # call 圖文選單-評分功能
+    if event.postback.data[0:1] == "F":
+        rating_text= response.text
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f'評分結果如下：+\n+rating_text'))
 
 
 
