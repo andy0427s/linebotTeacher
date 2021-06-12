@@ -23,6 +23,16 @@ from linebot.models import (
     PostbackTemplateAction
 )
 
+# from linebot.models import (
+#     MessageEvent, TextMessage, TextSendMessage, AudioMessage,
+#     LocationSendMessage, ImageSendMessage, StickerSendMessage,
+#     TemplateSendMessage, ButtonsTemplate, MessageTemplateAction
+# )
+
+
+
+# import urllib
+
 import string, time, os
 # import azure.cognitiveservices.speech as speechsdk
 
@@ -34,6 +44,7 @@ import base64
 import json
 import time
 import azure.cognitiveservices.speech as speechsdk
+
 
 # create flask server
 app = Flask(__name__)
@@ -74,15 +85,19 @@ def handle_message(event):
 '''
 
 
+
 # Linebot 功能列(文字跟語音)
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
 
-    msg = event.message.text
+    user_id = event.source.user_id # student id for DB
+    user_name = line_bot_api.get_profile(user_id).display_name # student name for DB
+    msg = event.message.text 
     msg = msg.encode('utf-8') 
-    page_keyword = ['hi', 'back', 'main','Back','Main','Hi']
-    questions = str(list(range(101)))
+    page_keyword = ['hi', 'back', 'main','Back','Main','Hi'] #shortcut for Linebot 主選單
+    questions = str(list(range(100))) # 題目編號
+
 
     # Send To Line
     # reply = TextSendMessage(text=f"{get_message}")
@@ -122,13 +137,15 @@ def handle_message(event):
             ])))
 
     # 學生選擇題目，需要和Azure指定題庫進行綁定
-    elif event.message.text in questions:
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"確認題目編號，請開始錄音!\n或輸入'back'返回主選單"))
-        saveid_hw = event.message.text # 題目編號for DB
 
-        while False:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"無此題目編號，請重新輸入assignID\n或輸入'back'返回主選單"))
-            break
+    if event.message.text.isdigit():
+        if event.message.text in questions:
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"確認題目編號，請開始錄音!\n或輸入'back'返回主選單"))
+            saveid_hw = event.message.text # 題目編號for DB
+        else:
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"無此題目編號，請重新輸入assignID，或輸入'back'返回主選單"))
+            
+          
 
 
 # 主頁面-'上傳錄音'功能/ 學生選擇題目編號
@@ -137,8 +154,49 @@ def handle_message(event):
 def handle_post_message(event):
 # can not get event text
 
+    # call 主選單-錄音功能
     if event.postback.data[0:1] == "A":
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='請輸入題庫assign ID：'))
+
+
+# 圖文選單-測試中
+
+'''
+    # call 圖文選單-主選單功能
+    if event.postback.data[0:1] == "E":
+        line_bot_api.reply_message(event.reply_token, TemplateSendMessage(alt_text='目錄 template',
+        template=ButtonsTemplate(
+            title='歡迎使用英語口說Linebot',
+            text='請選擇服務：',
+            thumbnail_image_url='https://powerlanguage.net/wp-content/uploads/2019/09/welcome-300x129.jpg', #圖片
+            actions=[
+                PostbackTemplateAction(
+                    label='上傳錄音',
+                    text='上傳錄音',
+                    data='A&上傳錄音'
+                ),
+                MessageTemplateAction(
+                    label='查看題庫',
+                    text='查看題庫',
+                    data='B&查看題庫'
+                ),
+                MessageTemplateAction(
+                    label='功能3',
+                    text='功能3',
+                    data='C&功能3'
+                ),
+                MessageTemplateAction(
+                    label='功能4',
+                    text='功能4',
+                    data='D&功能5'
+                )
+            ])))
+
+    # call 圖文選單-評分功能
+    if event.postback.data[0:1] == "F":
+        rating_text= response.text
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f'評分結果如下：+\n+rating_text'))
+'''
 
 
 # Line錄音回傳功能 / 回傳mp3音檔至本機端 
@@ -263,6 +321,7 @@ def handle_audio(event):
         with open(path_result, 'w') as fr:
             fr.write(json.dumps(resultJson, indent=4))
             fr.close()
+
 
 
 # add txt file(audio) to database 
