@@ -30,9 +30,6 @@ from linebot.models import (
 # )
 
 
-
-# import urllib
-
 import string, time, os
 # import azure.cognitiveservices.speech as speechsdk
 
@@ -46,12 +43,20 @@ import time
 import azure.cognitiveservices.speech as speechsdk
 
 
+# 題目匯入
+
+import csv
+
+
+# print(data)
+
 # create flask server
 app = Flask(__name__)
 # your linebot message API - Channel access token (from LINE Developer)
 line_bot_api = LineBotApi('8Ts4CK+L4y61wlM8vH+isb6A/mjewJ2Mo0El/M/oyLN9LRjPtug+5aHn8UHkh9kGpdSF7R4ozJI1N/6+XZJAs1vHPJT+lMfLvDZ8Or1i4dy+MwwP9ezTZvGwNn6dlbqz+Pf3i7LjNsDLjSN0PAaEuwdB04t89/1O/w1cDnyilFU=')
 # your linebot message API - Channel secret
 handler = WebhookHandler('7a9fd1a414a2222f84906dac60356264')
+
 
 
 @app.route("/callback", methods=['GET', 'POST'])
@@ -71,8 +76,54 @@ def callback():
         abort(400)
     return 'OK'
 
+
+# 題庫匯入 (本機端) / 後續需要從DB匯入題庫(Optional)
+with open('./dataset_table.csv', newline='') as f: # path for 題庫
+    reader = csv.reader(f)
+    data=list(reader) # Dataset from OS
+        
+num = 0
+sample=[] # list of (My name is Andy, Good Morning.....)
+index=[] # list of (1, 2, 3......)
+line_sample=[] # list of value for Linebot reply (1: My name is Andy, 2: Good Morning....)
+
+# 選擇列出多少題庫於LineBot上
+for i in data:
+    num += 1
+    sample.append(i[1]) 
+    index.append(i[0]) 
+    new= i[0]+':'+' '+ i[1] # Combine list of index & list of assignment
+    line_sample.append(new) 
+    if num == 30: # Select 30 samples from dataset 
+        break
+
+# Linebot 回覆本機題庫結果
+final_sample = "\n".join(line_sample)
+
+
+#DB匯入題庫(Optional)
+
+
+
+#指定題庫同步功能/依照學生選擇的題目，想對應地匯入指定題庫至Azure進行辨識
+
+azure_text=[] #Reference txt for Azure
+saveid_hw=[] # Assign ID for DB 
+
+def handle_assignmentID(user_input):
+
+    # 對比本機題庫內的Assign ID
+    for a in data: 
+        if user_input == a[0]:
+            azure_text.append(a[1])
+            saveid_hw.append(a[0])   
+            break
+
+    # 儲存對比結果(句子內容) & 指定題庫id
+    return azure_text , saveid_hw 
+
     
-# 接收 LINE 的資訊 / 回傳相同資訊
+# 接收 LINE 的資訊 / 回傳相同資訊 (Only for testing)
 
 '''
 @handler.add(MessageEvent, message=TextMessage)
@@ -91,20 +142,14 @@ def handle_message(event):
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
 
+    # 產生user ID 
     user_id = event.source.user_id # student id for DB
-    user_name = line_bot_api.get_profile(user_id).display_name # student name for DB
+    user_name = line_bot_api.get_profile(user_id).display_name # student name for DB (Optional)
     msg = event.message.text 
     msg = msg.encode('utf-8') 
     page_keyword = ['hi', 'back', 'main','Back','Main','Hi'] #shortcut for Linebot 主選單
-    questions = str(list(range(100))) # 題目編號
+    questions = str(list(range(101))) # 題目編號
 
-
-    # Send To Line
-    # reply = TextSendMessage(text=f"{get_message}")
-    # line_bot_api.reply_message(event.reply_token, reply)
-
-    # if event.message.text == "文字":
-    #     line_bot_api.reply_message(event.reply_token,TextSendMessage(text=event.message.text))
 
    # LineBot 主選單
     if event.message.text in page_keyword:
@@ -119,10 +164,10 @@ def handle_message(event):
                     text='上傳錄音',
                     data='A&上傳錄音'
                 ),
-                MessageTemplateAction(
+                PostbackTemplateAction(
                     label='查看題庫',
                     text='查看題庫',
-                    data='B&查看題庫'
+                    data='G&查看題庫'
                 ),
                 MessageTemplateAction(
                     label='功能3',
@@ -132,23 +177,29 @@ def handle_message(event):
                 MessageTemplateAction(
                     label='功能4',
                     text='功能4',
-                    data='D&功能5'
+                    data='D&功能4'
                 )
             ])))
 
-    # 學生選擇題目，需要和Azure指定題庫進行綁定
+
+
+    # 學生選擇題目
 
     if event.message.text.isdigit():
         if event.message.text in questions:
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"確認題目編號，請開始錄音!\n或輸入'back'返回主選單"))
-            saveid_hw = event.message.text # 題目編號for DB
+
+            # call 題目連結功能
+            handle_assignmentID(event.message.text)
+
         else:
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"無此題目編號，請重新輸入assignID，或輸入'back'返回主選單"))
-            
-          
 
+    return user_id
+              
+    
 
-# 主頁面-'上傳錄音'功能/ 學生選擇題目編號
+# 主選單按鈕所有功能 
 
 @handler.add(PostbackEvent)
 def handle_post_message(event):
@@ -158,12 +209,17 @@ def handle_post_message(event):
     if event.postback.data[0:1] == "A":
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='請輸入題庫assign ID：'))
 
+    # call 主選單-題庫功能-本機端 
+    if event.postback.data[0:1] == "G":
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='本次題庫如下:'+ '\n' + '{final_sample}'.format(final_sample=final_sample)))
 
-# 圖文選單-測試中
+    # # call 主選單-題庫功能-DB端 (Optional)
+    # if event.postback.data[0:1] == "G":
+    #     line_bot_api.reply_message(event.reply_token, TextSendMessage(text='本次題庫如下:'+ '\n' + '{final_sample}'.format(final_sample=final_sample)))
 
-'''
-    # call 圖文選單-主選單功能
-    if event.postback.data[0:1] == "E":
+
+    # call Richmenu-主選單功能
+    elif event.postback.data[0:1] == "E":
         line_bot_api.reply_message(event.reply_token, TemplateSendMessage(alt_text='目錄 template',
         template=ButtonsTemplate(
             title='歡迎使用英語口說Linebot',
@@ -175,10 +231,10 @@ def handle_post_message(event):
                     text='上傳錄音',
                     data='A&上傳錄音'
                 ),
-                MessageTemplateAction(
+                PostbackTemplateAction(
                     label='查看題庫',
                     text='查看題庫',
-                    data='B&查看題庫'
+                    data='G&查看題庫'
                 ),
                 MessageTemplateAction(
                     label='功能3',
@@ -188,15 +244,14 @@ def handle_post_message(event):
                 MessageTemplateAction(
                     label='功能4',
                     text='功能4',
-                    data='D&功能5'
+                    data='D&功能4'
                 )
             ])))
 
-    # call 圖文選單-評分功能
-    if event.postback.data[0:1] == "F":
-        rating_text= response.text
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f'評分結果如下：+\n+rating_text'))
-'''
+    # call Richmenu-評分功能 (wait for completion)
+    elif event.postback.data[0:1] == "F":
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='請查看評分結果：'))
+
 
 
 # Line錄音回傳功能 / 回傳mp3音檔至本機端 
@@ -268,7 +323,8 @@ def handle_audio(event):
                 break
             yield chunk
 
-    referenceText = 'Hello my name is Andy'  # input 指定題庫 from DB
+    referenceText = azure_text[0]  # 依照學生選擇的題目，想對應地匯入指定題庫進行辨識
+    # referenceText = 'Hello my name is Andy'  # input 指定題庫 from DB
     pronAssessmentParamsJson = "{\"ReferenceText\":\"%s\",\"GradingSystem\":\"HundredMark\",\"Dimension\":\"Comprehensive\"}" % referenceText
     pronAssessmentParamsBase64 = base64.b64encode(bytes(pronAssessmentParamsJson, 'utf-8'))
     pronAssessmentParams = str(pronAssessmentParamsBase64, "utf-8")
@@ -322,15 +378,13 @@ def handle_audio(event):
             fr.write(json.dumps(resultJson, indent=4))
             fr.close()
 
-
+    return path_wav
 
 # add txt file(audio) to database 
 
-'''
-@app.route('/addtest')
-def addTest():
-    addHomework(assignmentID, LINEID, path, label)
-'''
+
+# print(int(saveid_hw[0]), user_id, path_wav)
+
 
 
 # audio convert to text (Linebot)
