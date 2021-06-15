@@ -307,6 +307,28 @@ def updateStudent(sId, newId=None, newName=None, newLineId=None):
         return f"failed to find student {sId}"
 
 
+def registerStudent(sId, newLineId=None):
+    # for students to update info through LINE
+    checkExisting = Student.query.filter_by(lineId=newLineId).first()
+    if checkExisting:
+        return f"This account is already registered to {checkExisting.sName}. If this isn't you, please contact your teacher"
+
+    query = Student.query.get(sId)
+    if query:
+        if query.lineId in [None, "", "None"]:
+            query.lineId = newLineId
+        else:
+            return f"Student {sId} is already registered to a LINE account, please contact your teacher"
+        try:
+            db.session.commit()
+            return f"Welcome {query.sName}!"
+        except:
+            db.session.rollback()
+            return f"Failed to update, please contact your teacher"
+    else:
+        return f"Student {sId} does not exist, please contact your teacher"
+
+
 def updateHomework(file, newaId=None, newLineId=None, newFile=None, newLabel=None):
     query = Homework.query.get(file)
     olddata = query.__repr__()
