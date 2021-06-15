@@ -17,6 +17,7 @@
             <th class="fit">Assignment</th>
             <th>Prompt</th>
             <th>File</th>
+            <th class="fit"></th>
             <th>Submit Time</th>
             <th>Label</th>
         </tr>
@@ -26,9 +27,15 @@
         <tr>
             <td>{{ row.Student.sId }}</td>
             <td>{{ row.Student.sName }}</td>
-            <td>{{ row.Assignment.aId }}</td>
+            <td>{{ row.Homework.aId }}</td>
             <td>{{ row.Assignment.prompt }}</td>
             <td>{{ row.Homework.file }}</td>
+            <td>
+                <button class="btn btn-outline-secondary btn-sm playback">
+                    <i class="bi bi-volume-up"></i>
+                    <audio type="audio/mpeg" src="{{url_for ('static', filename=row.Homework.file)}}"></audio>
+                </button>
+            </td>
             <td>{{ row.Homework.submit_time }}</td>
             <td>{{ row.Homework.label }}</td>
         </tr>
@@ -77,6 +84,10 @@
                 });
             });
         });
+    });
+
+    $('.playback').click(function () {
+        $(this).find('audio')[0].play();
     });
 </script>
 

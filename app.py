@@ -171,7 +171,7 @@ def review_all():
     # query = db.session.query(Homework, Student).join(
     #     Student, Homework.lineId == Student.lineId)
     query = db.session.query(Homework, Student, Assignment).join(
-        Student, Homework.lineId == Student.lineId).join(Assignment, Homework.aId == Assignment.aId)
+        Student, Homework.lineId == Student.lineId, isouter=True).join(Assignment, Homework.aId == Assignment.aId, isouter=True)
     return render_template('review.html',
                            page_header="Review",
                            data=query)
@@ -213,11 +213,11 @@ def reset():
     a1 = Assignment(prompt="You should go to the store")
     a2 = Assignment(prompt="He finished his breakfast early")
     a3 = Assignment(prompt="The flowers bloomed early this year")
-    h1 = Homework(aId=2, lineId='f027k', file="/uploaded/h1.wav")
-    h2 = Homework(aId=1, lineId='f027k', file="/uploaded/h2.wav")
-    h3 = Homework(aId=2, lineId='m410p', file="/uploaded/h3.wav")
-    h4 = Homework(aId=3, lineId='f027k', file="/uploaded/h4.wav")
-    h5 = Homework(aId=3, lineId='e109bs', file="/uploaded/h5.wav")
+    h1 = Homework(aId=2, lineId='f027k', file="uploaded/h1.wav")
+    h2 = Homework(aId=1, lineId='f027k', file="uploaded/h2.wav")
+    h3 = Homework(aId=2, lineId='m410p', file="uploaded/h3.wav")
+    h4 = Homework(aId=3, lineId='f027k', file="uploaded/h4.wav")
+    h5 = Homework(aId=3, lineId='e109bs', file="uploaded/h5.wav")
     entries = [s1, s2, s3, s4, a1, a2, a3, h1, h2, h3, h4, h5]
     db.session.add_all(entries)
     db.session.commit()
