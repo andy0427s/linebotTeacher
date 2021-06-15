@@ -33,7 +33,7 @@
             <td>
                 <button class="btn btn-outline-secondary btn-sm playback">
                     <i class="bi bi-volume-up"></i>
-                    <audio type="audio/mpeg" src="{{url_for ('static', filename=row.Homework.file)}}"></audio>
+                    <audio type="audio/mpeg" src="{{ row.Homework.file }}"></audio>
                 </button>
             </td>
             <td>{{ row.Homework.submit_time }}</td>
