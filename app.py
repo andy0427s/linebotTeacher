@@ -10,6 +10,7 @@ import os
 
 # Todo:
 # move functions to separate file?
+# timezone setting
 
 
 app = Flask(__name__)
@@ -330,7 +331,7 @@ def updateAssignment(aId, newId=None, newPrompt=None):
             db.session.rollback()
             return f"failed to update {olddata}"
     else:
-        return f"failed to find assignment {sId}"
+        return f"failed to find assignment {aId}"
 
 
 if __name__ == "__main__":

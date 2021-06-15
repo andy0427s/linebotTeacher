@@ -10,11 +10,16 @@ from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 
 # Linebot message handing
+from linebot.models import *
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage, AudioMessage,
-    LocationSendMessage, ImageSendMessage, StickerSendMessage
+    MessageEvent,
+    TextSendMessage,
+    TemplateSendMessage,
+    ButtonsTemplate,
+    MessageTemplateAction,
+    PostbackEvent,
+    PostbackTemplateAction
 )
-
 # Azure related plug-in
 
 import requests
@@ -73,19 +78,121 @@ def callback():
 
 # 接收 LINE 的資訊 / 回傳相同資訊
 
+'''
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     get_message = event.message.text
 
     # Send To Line
-    reply = TextSendMessage(text=f"{get_message}")
-    line_bot_api.reply_message(event.reply_token, reply)
+    # reply = TextSendMessage(text=f"{get_message}")
+    # line_bot_api.reply_message(event.reply_token, reply)
+'''
+
+# Linebot 功能列(文字跟語音)
+
+@handler.add(MessageEvent, message=TextMessage)
+def handle_message(event):
+
+    msg = event.message.text
+    msg = msg.encode('utf-8') 
+    page_keyword = ['hi', 'back', 'main','Back','Main','Hi']
+    questions = str(list(range(101)))
+
+    # Send To Line
+    # reply = TextSendMessage(text=f"{get_message}")
+    # line_bot_api.reply_message(event.reply_token, reply)
+
+    # if event.message.text == "文字":
+    #     line_bot_api.reply_message(event.reply_token,TextSendMessage(text=event.message.text))
+
+   # LineBot 主選單
+    if event.message.text in page_keyword:
+        line_bot_api.reply_message(event.reply_token, TemplateSendMessage(alt_text='目錄 template',
+        template=ButtonsTemplate(
+            title='歡迎使用英語口說Linebot',
+            text='請選擇服務：',
+            thumbnail_image_url='https://powerlanguage.net/wp-content/uploads/2019/09/welcome-300x129.jpg', #圖片
+            actions=[
+                PostbackTemplateAction(
+                    label='上傳錄音',
+                    text='上傳錄音',
+                    data='A&上傳錄音'
+                ),
+                MessageTemplateAction(
+                    label='查看題庫',
+                    text='查看題庫',
+                    data='B&查看題庫'
+                ),
+                MessageTemplateAction(
+                    label='功能3',
+                    text='功能3',
+                    data='C&功能3'
+                ),
+                MessageTemplateAction(
+                    label='功能4',
+                    text='功能4',
+                    data='D&功能5'
+                )
+            ])))
+
+    # 學生選擇題目，需要和Azure指定題庫進行綁定
+
+    if event.message.text.isdigit():
+        if event.message.text in questions:
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"確認題目編號，請開始錄音!\n或輸入'back'返回主選單"))
+            saveid_hw = event.message.text # 題目編號for DB
+        else:
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"無此題目編號，請重新輸入assignID，或輸入'back'返回主選單"))
+            
+
+# 主頁面-'上傳錄音'功能/ 學生選擇題目編號
+
+@handler.add(PostbackEvent)
+def handle_post_message(event):
+# can not get event text
+
+    # call 主選單-錄音功能
+    if event.postback.data[0:1] == "A":
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='請輸入題庫assign ID：'))
+
+    # call 圖文選單-主選單功能
+    if event.postback.data[0:1] == "E":
+        line_bot_api.reply_message(event.reply_token, TemplateSendMessage(alt_text='目錄 template',
+        template=ButtonsTemplate(
+            title='歡迎使用英語口說Linebot',
+            text='請選擇服務：',
+            thumbnail_image_url='https://powerlanguage.net/wp-content/uploads/2019/09/welcome-300x129.jpg', #圖片
+            actions=[
+                PostbackTemplateAction(
+                    label='上傳錄音',
+                    text='上傳錄音',
+                    data='A&上傳錄音'
+                ),
+                MessageTemplateAction(
+                    label='查看題庫',
+                    text='查看題庫',
+                    data='B&查看題庫'
+                ),
+                MessageTemplateAction(
+                    label='功能3',
+                    text='功能3',
+                    data='C&功能3'
+                ),
+                MessageTemplateAction(
+                    label='功能4',
+                    text='功能4',
+                    data='D&功能5'
+                )
+            ])))
+
+    # call 圖文選單-評分功能
+    if event.postback.data[0:1] == "F":
+        rating_text= response.text
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f'評分結果如下：+\n+rating_text'))
 
 
 
-# 1. Line錄音回傳功能 (本機端-mp3) 
-# 2. 同步mp3音檔轉wav (mp3 to wav)
-# 3. Google API寫入文字檔 (txt)
+# Line錄音回傳功能 / 回傳mp3/wav音檔至本機端 
 
 @handler.add(MessageEvent, message=AudioMessage)
 def handle_audio(event):
@@ -95,9 +202,11 @@ def handle_audio(event):
     audio_content = line_bot_api.get_message_content(event.message.id)
     mp3file = now+audio_name+'.mp3'
     wavfile = now+audio_name+'.wav'
+    txtfile = now+audio_name+'.txt'
 
-    path='./recording/'+mp3file  # mp3 file path 
-    path_wav='./recording_wav/'+wavfile # wav file path
+    path='./recording/'+mp3file  # mp3 file path for DB
+    path_wav='./recording_wav/'+wavfile # wav file path for DB
+    path_txt='./text/'+txtfile # txt file path
 
     with open(path, 'wb') as fd:
         for chunk in audio_content.iter_content():
@@ -106,14 +215,29 @@ def handle_audio(event):
     # mp3 to wav converter - ffmpeg in same path
     os.system('ffmpeg -y -i ' + path + ' ' + path_wav + ' -loglevel quiet')
 
+    
 
-    # LineBot 回傳功能(if needed)
+    '''
+    # audio to txt converter 
+    audio_filename = "./recording_wav/{now}{audio_name}.wav".format(now=now ,audio_name='_recording_hw')
+    
+    text = transcribe(audio_filename)
+  
+    # print('Transcribe:', text)
+    # line_bot_api.reply_message(event.reply_token, TextSendMessage(text = text))
 
-    # line_bot_api.reply_message(event.reply_token, TextSendMessage(text = text)
+    if text == None:
+        print('Google did not understand the sound, please try again')
+    
+    else:
+        print('Successful Uploading for TTS')
 
+        with open(path_txt, 'w') as ft:
+            ft.write(text)
+            ft.close()
 
-
-    # Azure 語音辨識功能 / 同時產生評分結果
+    '''
+# Azure 語音辨識功能 / 同時產生評分結果
 
 
     # Creates an instance of a speech config with specified subscription key and service region.
@@ -137,7 +261,7 @@ def handle_audio(event):
                 break
             yield chunk
 
-    referenceText = 'Hello my name is Andy'  # input 指定題庫  
+    referenceText = 'Hello my name is Andy'  # input 指定題庫 from DB
     pronAssessmentParamsJson = "{\"ReferenceText\":\"%s\",\"GradingSystem\":\"HundredMark\",\"Dimension\":\"Comprehensive\"}" % referenceText
     pronAssessmentParamsBase64 = base64.b64encode(bytes(pronAssessmentParamsJson, 'utf-8'))
     pronAssessmentParams = str(pronAssessmentParamsBase64, "utf-8")
@@ -156,7 +280,7 @@ def handle_audio(event):
     # create txt file for result storage
     result_name = '_final_result'
     result_file = now+result_name+'.txt'
-    path_result='./text/'+result_file # txt file path
+    path_result='./text/'+result_file # result file path for DB
 
     # input wav file 
 
@@ -174,25 +298,40 @@ def handle_audio(event):
     # print("Latency = %sms" % int(latency * 1000))
 
 
-    # Result uploading test
+    #show result in txt file
 
     if resultJson == None:
         print('Azure did not understand the sound, please try again')
-    
+        line_bot_api.reply_message(
+        event.reply_token, TextSendMessage(text='辨認音檔失敗，請重新錄製，或輸入"back"返回主選單'))
+        os.remove(path)
+        os.remove(path_wav)
+
     else:
         print('Successful Uploading for result')
-
-        #顯示評分結果於txt檔
+        line_bot_api.reply_message(
+        event.reply_token, TextSendMessage(text='辨認音檔成功，可以繼續錄製，或輸入"back"返回主選單'))
         with open(path_result, 'w') as fr:
             fr.write(json.dumps(resultJson, indent=4))
             fr.close()
 
 
-#LINE ID, Assignment ID, path, label(string from voice recognition)
+# add txt file(audio) to database 
 
-# output = addHomework(assignmentID, LINEID, path_db, label)
+'''
+@app.route('/addtest')
+def addTest():
+    addHomework(assignmentID, LINEID, path, label)
+'''
 
 
-# Run app on Heroku server
+# audio convert to text (Linebot)
+    
+#     os.system('ffmpeg -y -i ' + audio_name_mp3 + ' ' + audio_name_wav + ' -loglevel quiet')
+#     text = transcribe(audio_name_wav)
+#     print('Transcribe:', text)
+#     line_bot_api.reply_message(event.reply_token, TextSendMessage(text = text))
+
+# run app
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='127.0.0.1', port=12345)
