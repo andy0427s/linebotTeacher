@@ -17,10 +17,10 @@ app = Flask(__name__)
 app.secret_key = 'secretkeyzzz'
 
 
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-path_to_db = "/db/new.db"
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# path_to_db = "/db/new.db"
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite://{path_to_db}'
-# app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://jymwsjbzlanqbt:bdf219a8a2653c2d6c6e226c90071b4b0093960241e4f8a60f63c170732a517c@ec2-54-243-92-68.compute-1.amazonaws.com:5432/d9f853hbcsdg12'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://jymwsjbzlanqbt:bdf219a8a2653c2d6c6e226c90071b4b0093960241e4f8a60f63c170732a517c@ec2-54-243-92-68.compute-1.amazonaws.com:5432/d9f853hbcsdg12'
 # Use upper one for development, lower one for deployment, By Johnson
 db = SQLAlchemy(app)
 
