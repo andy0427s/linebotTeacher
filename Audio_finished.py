@@ -439,8 +439,10 @@ def handle_audio(event):
 #     line_bot_api.reply_message(event.reply_token, TextSendMessage(text = text))
 
 # run app
-if __name__ == "__main__":
-    app.run(host='127.0.0.1', port=12345)
+# if __name__ == "__main__":
+#     app.run(host='127.0.0.1', port=12345)
   
 
+if __name__ == "__main__":
+    app.run(debug=True)
 
