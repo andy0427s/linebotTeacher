@@ -12,7 +12,7 @@ from linebot import (
 from linebot.exceptions import (
     InvalidSignatureError, LineBotApiError
 )
-
+import boto3
 from linebot.models import *
 from linebot.models import (
     MessageEvent,
