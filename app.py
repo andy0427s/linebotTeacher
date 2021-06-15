@@ -35,7 +35,7 @@ class Student(db.Model):
     __tablename__ = 'student'
     sId = db.Column(db.Integer, primary_key=True)
     sName = db.Column(db.String(20), nullable=False)
-    lineId = db.Column(db.String(30), unique=True, nullable=False)
+    lineId = db.Column(db.String(30), unique=True)
 
     def __repr__(self):
         return f'[Student ID: {self.sId}, Name: {self.sName}, LINE: {self.lineId}]'
@@ -207,6 +207,7 @@ def reset():
     s2 = Student(sId=2, sName="Alice", lineId="a983g")
     s3 = Student(sId=3, sName="Charlie", lineId="f027k")
     s4 = Student(sId=4, sName="Dylan", lineId="m410p")
+    s5 = Student(sId=5, sName="Eve")
     a1 = Assignment(prompt="You should go to the store")
     a2 = Assignment(prompt="He finished his breakfast early")
     a3 = Assignment(prompt="The flowers bloomed early this year")
@@ -214,8 +215,9 @@ def reset():
     h2 = Homework(aId=1, lineId='f027k', file="uploaded/h2.wav")
     h3 = Homework(aId=2, lineId='m410p', file="uploaded/h3.wav")
     h4 = Homework(aId=3, lineId='f027k', file="uploaded/h4.wav")
-    h5 = Homework(aId=3, lineId='e109bs', file="uploaded/test.mp3")
-    entries = [s1, s2, s3, s4, a1, a2, a3, h1, h2, h3, h4, h5]
+    h5 = Homework(aId=3, lineId='e109bs',
+                  file="uploaded/test.mp3", label="playback test")
+    entries = [s1, s2, s3, s4, s5, a1, a2, a3, h1, h2, h3, h4, h5]
     db.session.add_all(entries)
     db.session.commit()
     return redirect('/showtables')
