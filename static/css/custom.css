@@ -34,3 +34,15 @@
     border-color: #faebcc;
     display: none;
 }
+
+.focus {
+    cursor: pointer;
+  }
+
+  .asc:after {
+    content: "\25B2";
+  }
+  
+  .desc:after {
+    content: "\25BC";
+  }
