@@ -16,6 +16,9 @@ import os
 # Linebot:
 # name registration
 
+# Prepare for AWS:
+# review.html src urls
+
 app = Flask(__name__)
 app.secret_key = 'secretkeyzzz'
 
@@ -189,17 +192,11 @@ def showTables():
                            data=results)
 
 
-@app.route('/createall')
-def newTables():
-    db.create_all()
-    return "created"
-
-
-@app.route('/dropall')
-def clearData():
-    # this drops all tables (not just rows)
+@app.route('/clear')
+def clear():
     db.drop_all()
-    return "tables dropped"
+    db.create_all()
+    return redirect('/showtables')
 
 
 @app.route('/reset')
@@ -217,7 +214,7 @@ def reset():
     h2 = Homework(aId=1, lineId='f027k', file="uploaded/h2.wav")
     h3 = Homework(aId=2, lineId='m410p', file="uploaded/h3.wav")
     h4 = Homework(aId=3, lineId='f027k', file="uploaded/h4.wav")
-    h5 = Homework(aId=3, lineId='e109bs', file="uploaded/h5.wav")
+    h5 = Homework(aId=3, lineId='e109bs', file="uploaded/test.mp3")
     entries = [s1, s2, s3, s4, a1, a2, a3, h1, h2, h3, h4, h5]
     db.session.add_all(entries)
     db.session.commit()
