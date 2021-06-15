@@ -415,7 +415,7 @@ def handle_audio(event):
         #call 分數字串處理 function
         handle_result(value1, value2, value3, value4, value5)
 
-        print(int(saveid_hw),user_id,path_wav,score_view)  # add 訊息內容 for DB (Most important part!)
+        # print(int(saveid_hw),user_id,path_wav,score_view)  # add 訊息內容 for DB (Most important part!)
 
         print(type(int(saveid_hw)),type(user_id),type(path_wav),type(score_view))
 
