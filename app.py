@@ -171,7 +171,7 @@ def review_all():
     # query = db.session.query(Homework, Student).join(
     #     Student, Homework.lineId == Student.lineId)
     query = db.session.query(Homework, Student, Assignment).join(
-        Student, Homework.lineId == Student.lineId).join(Assignment, Homework.aId == Assignment.aId)
+        Student, Homework.lineId == Student.lineId, isouter=True).join(Assignment, Homework.aId == Assignment.aId, isouter=True)
     return render_template('review.html',
                            page_header="Review",
                            data=query)
