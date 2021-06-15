@@ -55,7 +55,7 @@ import csv
 # print(data)
 
 # create flask server
-app = Flask(__name__)
+# app = Flask(__name__)
 # your linebot message API - Channel access token (from LINE Developer)
 # line_bot_api = LineBotApi('8Ts4CK+L4y61wlM8vH+isb6A/mjewJ2Mo0El/M/oyLN9LRjPtug+5aHn8UHkh9kGpdSF7R4ozJI1N/6+XZJAs1vHPJT+lMfLvDZ8Or1i4dy+MwwP9ezTZvGwNn6dlbqz+Pf3i7LjNsDLjSN0PAaEuwdB04t89/1O/w1cDnyilFU=')
 # your linebot message API - Channel secret
