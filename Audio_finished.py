@@ -290,9 +290,13 @@ def handle_audio(event):
     wavfile = now+audio_name+'.wav'
     txtfile = now+audio_name+'.txt'
 
-    path='./recording/'+mp3file  # mp3 file path for DB
-    path_wav='./recording_wav/'+wavfile # wav file path for DB
-    path_txt='./text/'+txtfile # txt file path
+    # path='./recording/'+mp3file  # mp3 file path for DB
+    # path_wav='./recording_wav/'+wavfile # wav file path for DB
+    # path_txt='./text/'+txtfile # txt file path
+
+    path=mp3file  # mp3 file path for DB
+    path_wav=wavfile # wav file path for DB
+    path_txt=txtfile # txt file path
 
     with open(path, 'wb') as fd:
         for chunk in audio_content.iter_content():
@@ -373,7 +377,8 @@ def handle_audio(event):
 
     # input wav file 
 
-    audio_filename = "./recording_wav/{now}{audio_name}.wav".format(now=now ,audio_name='_hw')
+    # audio_filename = "./recording_wav/{now}{audio_name}.wav".format(now=now ,audio_name='_hw')
+    audio_filename = "{now}{audio_name}.wav".format(now=now ,audio_name='_hw')
     audioFile = open(audio_filename, 'rb')
 
     response = requests.post(url=url, data=get_chunk(audioFile), headers=headers)
