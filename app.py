@@ -34,8 +34,8 @@ db = SQLAlchemy(app)
 class Student(db.Model):
     __tablename__ = 'student'
     sId = db.Column(db.Integer, primary_key=True)
-    sName = db.Column(db.String(20), nullable=False)
-    lineId = db.Column(db.String(30), unique=True)
+    sName = db.Column(db.String(50), nullable=False)
+    lineId = db.Column(db.String(100), unique=True)
 
     def __repr__(self):
         return f'[Student ID: {self.sId}, Name: {self.sName}, LINE: {self.lineId}]'
@@ -44,8 +44,8 @@ class Student(db.Model):
 class Homework(db.Model):
     __tablename__ = 'homework'
     aId = db.Column(db.Integer, nullable=False)
-    lineId = db.Column(db.String, nullable=False)
-    file = db.Column(db.String(50), primary_key=True)
+    lineId = db.Column(db.String(100), nullable=False)
+    file = db.Column(db.String(100), primary_key=True)
     submit_time = db.Column(db.DateTime, nullable=False,
                             default=datetime.now().replace(microsecond=0))
     # result from Azure
