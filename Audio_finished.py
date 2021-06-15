@@ -426,8 +426,21 @@ def handle_audio(event):
 
         with open(path_result, 'w') as fr:
             fr.write(json.dumps(resultJson['NBest'][0], indent=4)) # Only 擷取score部分的資訊 / 匯入json至os txt檔
-            fr.close() 
+            fr.close()
 
+        aws_access_key_id = os.environ.get('AWS_ACCESS_KEY_ID')
+        aws_secret_access_key = os.environ.get('AWS_SECRET_ACCESS_KEY')
+        def upload_aws(file, bucket, s3file):
+            s3 = boto3.client('s3',
+                              aws_access_key_id=aws_access_key_id,
+                              aws_secret_access_key=aws_secret_access_key)
+            s3.upload_file(file, bucket, s3file, ExtraArgs={
+                "ContentType": "mp3"
+            })
+            print('uploaded')
+            return True
+
+        uploaded = upload_aws('path', "engscoreaud", mp3file)
     return path_wav, finalresult, resultJson, value1, value2, value3, value4, value5
 
 # ---------------------------------------------------------------------------Test part-------------------------------------------------------------------------------------
