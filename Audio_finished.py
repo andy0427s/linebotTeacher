@@ -440,7 +440,7 @@ def handle_audio(event):
             print('uploaded')
             return True
 
-        uploaded = upload_aws('path', "engscoreaud", mp3file)
+        uploaded = upload_aws(path, "engscoreaud", mp3file)
     return path_wav, finalresult, resultJson, value1, value2, value3, value4, value5
 
 # ---------------------------------------------------------------------------Test part-------------------------------------------------------------------------------------
