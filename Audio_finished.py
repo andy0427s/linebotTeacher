@@ -3,7 +3,7 @@ from flask import Flask, request, abort
 
 # import Database
 from flask_sqlalchemy import SQLAlchemy
-from app_local import addHomework
+from app import *
 
 # import linebot related
 from linebot import (
