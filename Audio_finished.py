@@ -197,6 +197,7 @@ def handle_result(o1, o2, o3, o4, o5):
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     global user_id
+    global saveid_hw
     # 產生user ID
     user_id = event.source.user_id  # student id for DB
     user_name = line_bot_api.get_profile(
