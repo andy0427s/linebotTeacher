@@ -153,48 +153,17 @@ user_id = ""
 path_wav = ""
 
 
-def handle_assignmentID(user_input):
-    global azure_text
-    global saveid_hw
-    saveid_hw = ""
-    # 對比本機題庫內的Assign ID
-    for a, b in zip(saID_list, ssen_list):
-        if user_input == a:
-            azure_text = b
-            saveid_hw = a
-            break
-# =======
-# def handle_assignmentID(user_id, user_input):
-#     # print(f"I am session {session}")
-#     user = userVariables.query.get(user_id)
-#     query = Assignment.query.get(user_input)
-#     print("I see {query}!")
-#     # global azure_text
-#     # global saveid_hw
-#     # saveid_hw = ""
-#     # 對比本機題庫內的Assign ID
+def handle_assignmentID(user_id, user_input):
 
-#     user.selectedAssignment = user_input
-#     user.azureText = query.prompt
-#     db.session.commit()
+    user = userVariables.query.get(user_id)
+    query = Assignment.query.get(user_input)
+    print("I see {query}!")
 
-#     # for a, b in zip(saID_list, ssen_list):
-#     #     if user_input == a:
-#     #         print(
-#     #             f"yo we found it{user.selectedAssignment}->{a} and {user.azureText}->{b}")
-#     #         user.azureText = b
-#     #         user.selectedAssignment = a
-#     #         db.session.commit()
-
-#     #         break
-#     print(
-#         f"successfully did the thing {user.lineId} {user.selectedAssignment}, {user.azureText}")
-#     # print(f"handled! {session['azure_text']}, {session['saveid_hw']}")
-# >>>>>>> b5e2285 (store user variables as db)
-#     # print(user_input)
-#     # print(saveid_hw)
-#     # 儲存對比結果(句子內容) & 指定題庫id
-#     return azure_text , saveid_hw
+    user.selectedAssignment = user_input
+    user.azureText = query.prompt
+    db.session.commit()
+    print(
+        f"successfully did the thing {user.lineId} {user.selectedAssignment}, {user.azureText}")
 
 
 '''
@@ -343,15 +312,9 @@ def handle_message(event):
 
             # call 題目連結功能
             print(f"number received: {event.message.text}")
-            # print(f"before setting saveid_hw: {saveid_hw}")
-# <<<<<<< HEAD
-#             handle_assignmentID(event.message.text)
-#             print(f"after setting saveid_hw: {saveid_hw}")
-# =======
             selection = int(event.message.text)
             handle_assignmentID(user_id, selection)
-            # print(f"after setting saveid_hw: {session['saveid_hw']}")
-# >>>>>>> b5e2285 (store user variables as db)
+
         else:
             line_bot_api.reply_message(event.reply_token, TextSendMessage(
                 text=f"無此題目編號，請重新輸入assignID，或按下方按鈕返回主選單"))
@@ -426,16 +389,11 @@ def handle_post_message(event):
 
 @handler.add(MessageEvent, message=AudioMessage)
 def handle_audio(event):
-    # <<<<<<< HEAD
-    #     print(azure_text)
-    #     print(saveid_hw)
-    # =======
+
     user_id = event.source.user_id
     query = userVariables.query.get(user_id)
     print(f"I am {query}")
-    # print(azure_text)
-    # print(saveid_hw)
-# >>>>>>> b5e2285 (store user variables as db)
+
     now = time.strftime(
         "%Y%m%d-%H%M", time.localtime(time.time()))  # 按照時間順序新增檔名
     audio_name = '_hw'
@@ -480,11 +438,8 @@ def handle_audio(event):
                 break
             yield chunk
 
-# <<<<<<< HEAD
-#     referenceText = azure_text  # 依照學生輸入，匯入指定題庫進行辨識(DB端)
-# =======
     referenceText = query.azureText  # 依照學生輸入，匯入指定題庫進行辨識(DB端)
-# >>>>>>> b5e2285 (store user variables as db)
+
     # referenceText = 'Hello my name is Andy'  # 依照學生輸入，匯入指定題庫進行辨識(DB端)
 
     # 如要show個別單字 \"Granularity\":\"FullText\"
@@ -544,11 +499,8 @@ def handle_audio(event):
 
     else:
         print('Successful Uploading for result')
-# <<<<<<< HEAD
-#         print(azure_text)
-# =======
         print(query.azureText)
-# >>>>>>> b5e2285 (store user variables as db)
+
         line_bot_api.reply_message(
             event.reply_token, TextSendMessage(text='辨認音檔成功，可以繼續錄製，或按下方按鈕查看評分結果'))
 
@@ -598,29 +550,12 @@ def handle_audio(event):
         addHomework(query.selectedAssignment, user_id,
                     "https://engscoreaud.s3.amazonaws.com/"+mp3file, score_view)
 
-        # aws_access_key_id = os.environ.get('AWS_ACCESS_KEY_ID')
-        # aws_secret_access_key = os.environ.get('AWS_SECRET_ACCESS_KEY')
-
-        # def upload_aws(file, bucket, s3file):
-        #     s3 = boto3.client('s3',
-        #                       aws_access_key_id=aws_access_key_id,
-        #                       aws_secret_access_key=aws_secret_access_key)
-        #     s3.upload_file(file, bucket, s3file, ExtraArgs={
-        #         "ContentType": "mp3"
-        #     })
-        #     print('uploaded')
-        #     return True
-
-        # uploaded = upload_aws(path, "engscoreaud", mp3file)
-# >>>>>>> b5e2285 (store user variables as db)
-#     return path_wav, finalresult, resultJson, value1, value2, value3, value4, value5
 
 # run app on Ngrok (本機端)
 # if __name__ == "__main__":
 #     app.run(host='127.0.0.1', port=12345)
 
 # run app on Heroku (Server端)
-
 
 if __name__ == "__main__":
     app.run(debug=True)
