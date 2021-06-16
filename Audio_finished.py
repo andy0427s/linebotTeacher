@@ -291,7 +291,8 @@ def handle_message(event):
 
             # call 題目連結功能
             print(f"number received: {event.message.text}")
-            print(f"before setting saveid_hw: {saveid_hw}")
+            if saveid_hw:
+                print(f"before setting saveid_hw: {saveid_hw}")
             handle_assignmentID(event.message.text)
             print(f"after setting saveid_hw: {saveid_hw}")
         else:
