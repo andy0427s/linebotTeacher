@@ -144,7 +144,8 @@ path_wav=""
 
 def handle_assignmentID(user_input):
     global azure_text
-    global saveid_hw
+    # global saveid_hw
+    saveid_hw = ""
     # 對比本機題庫內的Assign ID
     for a , b in zip(saID_list, ssen_list): 
         if user_input == a:
@@ -286,7 +287,7 @@ def handle_message(event):
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"確認題目編號，請開始錄音!\n或按下方按鈕返回主選單"))
 
             # call 題目連結功能
-            handle_assignmentID(event.message.text)
+            azure_text , saveid_hw  = handle_assignmentID(event.message.text)
 
         else:
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"無此題目編號，請重新輸入assignID，或按下方按鈕返回主選單"))
