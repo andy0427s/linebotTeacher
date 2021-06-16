@@ -136,8 +136,8 @@ final_sample = "\n".join(clean_view_list)
 
 # 指定題庫同步功能/依照學生選擇的題目，想對應地匯入指定題庫至Azure進行辨識 (DB端)
 
-azure_text="" #Reference txt for Azure
-saveid_hw=""# Assign ID for DB 
+# azure_text="" #Reference txt for Azure
+# saveid_hw=""# Assign ID for DB 
 
 user_id=""
 path_wav=""
@@ -152,11 +152,16 @@ def handle_assignmentID(user_input):
             azure_text = b
             saveid_hw = a   
             break
-    print(user_input)
-    print(saveid_hw)
+    # print(user_input)
+    # print(saveid_hw)
     # 儲存對比結果(句子內容) & 指定題庫id
     return azure_text , saveid_hw 
+azure_text, saveid_hw = handle_assignmentID()
+print(user_input)
+print(saveid_hw)
 
+def handle_assignmentID_fix(saveid_hw, azuretext):
+    return saveid_hw, azuretext
 '''
 
 #指定題庫同步功能/依照學生選擇的題目，想對應地匯入指定題庫至Azure進行辨識 (本機端)
@@ -291,7 +296,7 @@ def handle_message(event):
 
             # call 題目連結功能
             azure_text , saveid_hw  = handle_assignmentID(event.message.text)
-
+            handle_assignmentID_fix(saveid_hw, azure_text)
         else:
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"無此題目編號，請重新輸入assignID，或按下方按鈕返回主選單"))
 
@@ -365,7 +370,7 @@ def handle_post_message(event):
 
 @handler.add(MessageEvent, message=AudioMessage)
 def handle_audio(event):
-
+    handle_assignmentID_fix()
     now = time.strftime(
         "%Y%m%d-%H%M", time.localtime(time.time()))  # 按照時間順序新增檔名
     audio_name = '_hw'
@@ -470,6 +475,7 @@ def handle_audio(event):
 
     else:
         print('Successful Uploading for result')
+        print(azure_text)
         line_bot_api.reply_message(
             event.reply_token, TextSendMessage(text='辨認音檔成功，可以繼續錄製，或按下方按鈕查看評分結果'))
 
