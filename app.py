@@ -235,7 +235,11 @@ def reset():
 
 @app.route('/secret')
 def secret():
-    return "placeholder"
+    query = userVariables.query.all()
+    result = ""
+    for entry in query:
+        result = result+str(entry)+"\n"
+    return result
 
 
 def addStudent(sId, sName, lineId):
