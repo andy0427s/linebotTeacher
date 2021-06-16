@@ -125,7 +125,7 @@ final_sample = "".join(line_sample)
 # 題庫匯入(DB端)
 
 def displayAssignments():
-    all_assign = Assignment.query.all().order_by(Assignment.aId)
+    all_assign = Assignment.query.order_by(Assignment.aId).all()
 
     clean_view_list = []
     clean_view = ""
