@@ -10,14 +10,8 @@ import os
 
 # Todo:
 # move functions to separate file?
-# timezone setting
-# review homework (/all and by /student/id)
-
-# Linebot:
-# name registration
-
-# Prepare for AWS:
-# review.html src urls
+# timezone setting?
+# review homework (by /student/id)
 
 app = Flask(__name__)
 app.secret_key = 'secretkeyzzz'
