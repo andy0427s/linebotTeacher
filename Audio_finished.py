@@ -124,24 +124,25 @@ final_sample = "".join(line_sample)
 
 # 題庫匯入(DB端)
 
-all_assign = Assignment.query.all()
+def displayAssignments():
+    all_assign = Assignment.query.all()
 
-clean_view_list = []
-clean_view = ""
-saID_list = []
-ssen_list = []
+    clean_view_list = []
+    clean_view = ""
+    saID_list = []
+    ssen_list = []
 
-for z in all_assign:
-    saID = str(z.aId)
-    ssen = str(z.prompt)
-    clean_view = saID + "." + " " + ssen
-    # print(clean_view)
-    clean_view_list.append(clean_view)
-    saID_list.append(saID)
-    ssen_list.append(ssen)
-    # print(saID_list, ssen_list)
+    for z in all_assign:
+        saID = str(z.aId)
+        ssen = str(z.prompt)
+        clean_view = saID + "." + " " + ssen
+        # print(clean_view)
+        clean_view_list.append(clean_view)
+        saID_list.append(saID)
+        ssen_list.append(ssen)
+        # print(saID_list, ssen_list)
 
-final_sample = "\n".join(clean_view_list)
+    return "\n".join(clean_view_list)
 
 
 # 指定題庫同步功能/依照學生選擇的題目，想對應地匯入指定題庫至Azure進行辨識 (DB端)
@@ -306,20 +307,17 @@ def handle_message(event):
     # 學生選擇題目from DB
 
     if event.message.text.isdigit():
-        if event.message.text in saID_list:
+        selection = int(event.message.text)
+        if Assignment.query.get(selection):
+            handle_assignmentID(user_id, selection)
             line_bot_api.reply_message(event.reply_token, TextSendMessage(
                 text=f"確認題目編號，請開始錄音!\n或按下方按鈕返回主選單"))
-
             # call 題目連結功能
             print(f"number received: {event.message.text}")
-            selection = int(event.message.text)
-            handle_assignmentID(user_id, selection)
 
         else:
             line_bot_api.reply_message(event.reply_token, TextSendMessage(
                 text=f"無此題目編號，請重新輸入assignID，或按下方按鈕返回主選單"))
-
-    return user_id
 
     if event.message.text in result_keyword:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(
@@ -346,8 +344,9 @@ def handle_post_message(event):
 
     # call 主選單-題庫功能-DB端
     if event.postback.data[0:1] == "G":
+        assignmentList = displayAssignments()
         line_bot_api.reply_message(event.reply_token, TextSendMessage(
-            text='本次題庫如下:' + '\n' + '{final_sample}'.format(final_sample=final_sample)))
+            text=f'本次題庫如下:\n{assignmentList}'))
 
     # call Richmenu-主選單功能
     elif event.postback.data[0:1] == "E":
