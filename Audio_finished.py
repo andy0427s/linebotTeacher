@@ -53,6 +53,16 @@ import azure.cognitiveservices.speech as speechsdk
 import csv
 
 
+class userVariables(db.Model):
+    __tablename__ = 'variables'
+    lineId = db.Column(db.String(100), primary_key=True)
+    selectedAssignment = db.Column(db.Integer)
+    azureText = db.Column(db.String(100))
+
+    def __repr__(self):
+        return f'[line ID: {self.lineId}, Assignment ID: {self.selectedAssignment}, text: {self.azureText}]'
+
+
 # print(data)
 
 # create flask server
@@ -137,26 +147,54 @@ final_sample = "\n".join(clean_view_list)
 # 指定題庫同步功能/依照學生選擇的題目，想對應地匯入指定題庫至Azure進行辨識 (DB端)
 
 # azure_text="" #Reference txt for Azure
-# saveid_hw=""# Assign ID for DB 
+# saveid_hw=""# Assign ID for DB
 
-user_id=""
-path_wav=""
+user_id = ""
+path_wav = ""
+
 
 def handle_assignmentID(user_input):
     global azure_text
     global saveid_hw
     saveid_hw = ""
     # 對比本機題庫內的Assign ID
-    for a , b in zip(saID_list, ssen_list): 
+    for a, b in zip(saID_list, ssen_list):
         if user_input == a:
             azure_text = b
-            saveid_hw = a   
+            saveid_hw = a
             break
-    # print(user_input)
-    # print(saveid_hw)
-    # 儲存對比結果(句子內容) & 指定題庫id
-    return azure_text , saveid_hw 
+# =======
+# def handle_assignmentID(user_id, user_input):
+#     # print(f"I am session {session}")
+#     user = userVariables.query.get(user_id)
+#     query = Assignment.query.get(user_input)
+#     print("I see {query}!")
+#     # global azure_text
+#     # global saveid_hw
+#     # saveid_hw = ""
+#     # 對比本機題庫內的Assign ID
 
+#     user.selectedAssignment = user_input
+#     user.azureText = query.prompt
+#     db.session.commit()
+
+#     # for a, b in zip(saID_list, ssen_list):
+#     #     if user_input == a:
+#     #         print(
+#     #             f"yo we found it{user.selectedAssignment}->{a} and {user.azureText}->{b}")
+#     #         user.azureText = b
+#     #         user.selectedAssignment = a
+#     #         db.session.commit()
+
+#     #         break
+#     print(
+#         f"successfully did the thing {user.lineId} {user.selectedAssignment}, {user.azureText}")
+#     # print(f"handled! {session['azure_text']}, {session['saveid_hw']}")
+# >>>>>>> b5e2285 (store user variables as db)
+#     # print(user_input)
+#     # print(saveid_hw)
+#     # 儲存對比結果(句子內容) & 指定題庫id
+#     return azure_text , saveid_hw
 
 
 '''
@@ -194,12 +232,11 @@ def handle_result(o1, o2, o3, o4, o5):
     return score_view  # Result for DB
 
 
-
 # Linebot 功能列(文字跟語音)
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    global user_id
+    # global user_id
     # 產生user ID
     user_id = event.source.user_id  # student id for DB
     user_name = line_bot_api.get_profile(
@@ -210,6 +247,20 @@ def handle_message(event):
                     'Main', 'Hi']  # shortcut for Linebot 主選單
     result_keyword = 'result'
     # questions = str(list(range(101)))  # 題目編號for本機端
+
+    query = userVariables.query.get(user_id)
+    print(f"I am {query}")
+    if not query:
+        print(f"creating new user {user_id}")
+        newuser = userVariables(lineId=user_id)
+        db.session.add(newuser)
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
+            print("failed to add user")
+    else:
+        print("found ya!")
 
     if event.message.text.lower() == "status":
         # let the student check if LINE ID is registered to a Student ID
@@ -287,18 +338,25 @@ def handle_message(event):
 
     if event.message.text.isdigit():
         if event.message.text in saID_list:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"確認題目編號，請開始錄音!\n或按下方按鈕返回主選單"))
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(
+                text=f"確認題目編號，請開始錄音!\n或按下方按鈕返回主選單"))
 
             # call 題目連結功能
             print(f"number received: {event.message.text}")
             # print(f"before setting saveid_hw: {saveid_hw}")
-            handle_assignmentID(event.message.text)
-            print(f"after setting saveid_hw: {saveid_hw}")
+# <<<<<<< HEAD
+#             handle_assignmentID(event.message.text)
+#             print(f"after setting saveid_hw: {saveid_hw}")
+# =======
+            selection = int(event.message.text)
+            handle_assignmentID(user_id, selection)
+            # print(f"after setting saveid_hw: {session['saveid_hw']}")
+# >>>>>>> b5e2285 (store user variables as db)
         else:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"無此題目編號，請重新輸入assignID，或按下方按鈕返回主選單"))
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(
+                text=f"無此題目編號，請重新輸入assignID，或按下方按鈕返回主選單"))
 
     return user_id
-
 
     if event.message.text in result_keyword:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(
@@ -323,9 +381,10 @@ def handle_post_message(event):
             text='本次題庫如下:' + '' + '{final_sample}'.format(final_sample=final_sample)))
     '''
 
-    # call 主選單-題庫功能-DB端 
+    # call 主選單-題庫功能-DB端
     if event.postback.data[0:1] == "G":
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='本次題庫如下:'+ '\n' + '{final_sample}'.format(final_sample=final_sample)))
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(
+            text='本次題庫如下:' + '\n' + '{final_sample}'.format(final_sample=final_sample)))
 
     # call Richmenu-主選單功能
     elif event.postback.data[0:1] == "E":
@@ -367,8 +426,16 @@ def handle_post_message(event):
 
 @handler.add(MessageEvent, message=AudioMessage)
 def handle_audio(event):
-    print(azure_text)
-    print(saveid_hw)
+    # <<<<<<< HEAD
+    #     print(azure_text)
+    #     print(saveid_hw)
+    # =======
+    user_id = event.source.user_id
+    query = userVariables.query.get(user_id)
+    print(f"I am {query}")
+    # print(azure_text)
+    # print(saveid_hw)
+# >>>>>>> b5e2285 (store user variables as db)
     now = time.strftime(
         "%Y%m%d-%H%M", time.localtime(time.time()))  # 按照時間順序新增檔名
     audio_name = '_hw'
@@ -413,7 +480,11 @@ def handle_audio(event):
                 break
             yield chunk
 
-    referenceText = azure_text  # 依照學生輸入，匯入指定題庫進行辨識(DB端)
+# <<<<<<< HEAD
+#     referenceText = azure_text  # 依照學生輸入，匯入指定題庫進行辨識(DB端)
+# =======
+    referenceText = query.azureText  # 依照學生輸入，匯入指定題庫進行辨識(DB端)
+# >>>>>>> b5e2285 (store user variables as db)
     # referenceText = 'Hello my name is Andy'  # 依照學生輸入，匯入指定題庫進行辨識(DB端)
 
     # 如要show個別單字 \"Granularity\":\"FullText\"
@@ -473,7 +544,11 @@ def handle_audio(event):
 
     else:
         print('Successful Uploading for result')
-        print(azure_text)
+# <<<<<<< HEAD
+#         print(azure_text)
+# =======
+        print(query.azureText)
+# >>>>>>> b5e2285 (store user variables as db)
         line_bot_api.reply_message(
             event.reply_token, TextSendMessage(text='辨認音檔成功，可以繼續錄製，或按下方按鈕查看評分結果'))
 
@@ -484,7 +559,7 @@ def handle_audio(event):
         handle_result(value1, value2, value3, value4, value5)
 
         # Testing part
-        # print(int(saveid_hw),user_id,path_wav,score_view) 
+        # print(int(saveid_hw),user_id,path_wav,score_view)
         # print(type(int(saveid_hw)),type(user_id),type(path_wav),type(score_view))
 
         # aId = 2 <class 'int'>
@@ -492,15 +567,16 @@ def handle_audio(event):
         # file = ./recording_wav/20210614-2128_recording_hw.wav <class 'str'>
         # label = I have to go to sleep. <class 'str'>
 
-
         with open(path_result, 'w') as fr:
             # Only 擷取score部分的資訊 / 匯入json至os txt檔
             fr.write(json.dumps(resultJson['NBest'][0], indent=4))
             fr.close()
 
         # Output Linebot訊息內容 to DB (Most important part!)
+
         print(f'before adding Homework - saveid_hw = {saveid_hw}')
-        addHomework(int(saveid_hw), user_id, "https://engscoreaud.s3.amazonaws.com/"+mp3file, score_view)
+        addHomework(int(saveid_hw), user_id,
+                    "https://engscoreaud.s3.amazonaws.com/"+mp3file, score_view)
 
         aws_access_key_id = os.environ.get('AWS_ACCESS_KEY_ID')
         aws_secret_access_key = os.environ.get('AWS_SECRET_ACCESS_KEY')
@@ -516,13 +592,35 @@ def handle_audio(event):
             return True
 
         uploaded = upload_aws(path, "engscoreaud", mp3file)
-    return path_wav, finalresult, resultJson, value1, value2, value3, value4, value5
+
+        print(
+            f'before adding Homework - saveid_hw = {query.selectedAssignment}')
+        addHomework(query.selectedAssignment, user_id,
+                    "https://engscoreaud.s3.amazonaws.com/"+mp3file, score_view)
+
+        # aws_access_key_id = os.environ.get('AWS_ACCESS_KEY_ID')
+        # aws_secret_access_key = os.environ.get('AWS_SECRET_ACCESS_KEY')
+
+        # def upload_aws(file, bucket, s3file):
+        #     s3 = boto3.client('s3',
+        #                       aws_access_key_id=aws_access_key_id,
+        #                       aws_secret_access_key=aws_secret_access_key)
+        #     s3.upload_file(file, bucket, s3file, ExtraArgs={
+        #         "ContentType": "mp3"
+        #     })
+        #     print('uploaded')
+        #     return True
+
+        # uploaded = upload_aws(path, "engscoreaud", mp3file)
+# >>>>>>> b5e2285 (store user variables as db)
+#     return path_wav, finalresult, resultJson, value1, value2, value3, value4, value5
 
 # run app on Ngrok (本機端)
 # if __name__ == "__main__":
 #     app.run(host='127.0.0.1', port=12345)
 
 # run app on Heroku (Server端)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
