@@ -200,8 +200,6 @@ def handle_result(o1, o2, o3, o4, o5):
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     global user_id
-    global saveid_hw
-    global azure_text
     # 產生user ID
     user_id = event.source.user_id  # student id for DB
     user_name = line_bot_api.get_profile(
@@ -292,7 +290,10 @@ def handle_message(event):
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"確認題目編號，請開始錄音!\n或按下方按鈕返回主選單"))
 
             # call 題目連結功能
+            print(f"number received: {event.message.text}")
+            print(f"before setting saveid_hw: {saveid_hw}")
             handle_assignmentID(event.message.text)
+            print(f"after setting saveid_hw: {saveid_hw}")
         else:
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"無此題目編號，請重新輸入assignID，或按下方按鈕返回主選單"))
 
@@ -498,6 +499,7 @@ def handle_audio(event):
             fr.close()
 
         # Output Linebot訊息內容 to DB (Most important part!)
+        print(f'before adding Homework - saveid_hw = {saveid_hw}')
         addHomework(int(saveid_hw), user_id, "https://engscoreaud.s3.amazonaws.com/"+mp3file, score_view)
 
         aws_access_key_id = os.environ.get('AWS_ACCESS_KEY_ID')
