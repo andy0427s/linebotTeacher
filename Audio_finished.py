@@ -157,7 +157,7 @@ def handle_assignmentID(user_id, user_input):
 
     user = userVariables.query.get(user_id)
     query = Assignment.query.get(user_input)
-    print("I see {query}!")
+    print(f"I see {query}!")
 
     user.selectedAssignment = user_input
     user.azureText = query.prompt
