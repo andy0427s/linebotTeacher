@@ -143,7 +143,7 @@ user_id=""
 path_wav=""
 
 def handle_assignmentID(user_input):
-    global azure_text
+    # global azure_text
     # global saveid_hw
     saveid_hw = ""
     # 對比本機題庫內的Assign ID
@@ -198,6 +198,7 @@ def handle_result(o1, o2, o3, o4, o5):
 def handle_message(event):
     global user_id
     global saveid_hw
+    global azure_text
     # 產生user ID
     user_id = event.source.user_id  # student id for DB
     user_name = line_bot_api.get_profile(
