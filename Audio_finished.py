@@ -307,11 +307,13 @@ def handle_message(event):
     # 學生選擇題目from DB
 
     if event.message.text.isdigit():
-        selection = int(event.message.text)
-        if Assignment.query.get(selection):
-            handle_assignmentID(user_id, selection)
+        selector = int(event.message.text)
+        selected = Assignment.query.get(selector)
+        if selected:
+            handle_assignmentID(user_id, selector)
             line_bot_api.reply_message(event.reply_token, TextSendMessage(
-                text=f"確認題目編號，請開始錄音!\n或按下方按鈕返回主選單"))
+                text=[f"題目: {selected.prompt}",
+                      f"確認題目編號，請開始錄音!\n或按下方按鈕返回主選單"]))
             # call 題目連結功能
             print(f"number received: {event.message.text}")
 
