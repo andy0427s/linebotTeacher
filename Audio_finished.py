@@ -311,9 +311,9 @@ def handle_message(event):
         selected = Assignment.query.get(selector)
         if selected:
             handle_assignmentID(user_id, selector)
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(
-                text=[f"題目: {selected.prompt}",
-                      f"確認題目編號，請開始錄音!\n或按下方按鈕返回主選單"]))
+            line_bot_api.reply_message(event.reply_token,
+                                       [TextSendMessage(text=f"題目: {selected.prompt}"),
+                                        TextSendMessage(text=f"確認題目編號，請開始錄音!\n或按下方按鈕返回主選單")])
             # call 題目連結功能
             print(f"number received: {event.message.text}")
 
