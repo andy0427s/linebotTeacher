@@ -93,7 +93,7 @@ def remove_edit():
         results = {}
         results['students'] = Student.query.order_by(Student.sId).all()
         results['homeworks'] = Homework.query.order_by(
-            Homework.submit_time).all()
+            Homework.submit_time.desc()).all()
         results['assignments'] = Assignment.query.order_by(
             Assignment.aId).all()
         return render_template('remove-and-edit.html',
@@ -170,7 +170,7 @@ def review_all():
     # query = db.session.query(Homework, Student).join(
     #     Student, Homework.lineId == Student.lineId)
     query = db.session.query(Homework, Student, Assignment).join(
-        Student, Homework.lineId == Student.lineId, isouter=True).join(Assignment, Homework.aId == Assignment.aId, isouter=True)
+        Student, Homework.lineId == Student.lineId, isouter=True).join(Assignment, Homework.aId == Assignment.aId, isouter=True).order_by(Homework.submit_time.desc())
     return render_template('review.html',
                            page_header="Review",
                            data=query)
@@ -181,7 +181,8 @@ def review_all():
 def showTables():
     results = {}
     results['students'] = Student.query.order_by(Student.sId).all()
-    results['homeworks'] = Homework.query.order_by(Homework.submit_time).all()
+    results['homeworks'] = Homework.query.order_by(
+        Homework.submit_time.desc()).all()
     results['assignments'] = Assignment.query.order_by(Assignment.aId).all()
     return render_template('showtables.html',
                            page_header="All tables",
