@@ -91,9 +91,10 @@ def create():
 def remove_edit():
     if request.method == "GET":
         results = {}
-        results['students'] = Student.query.all()
-        results['homeworks'] = Homework.query.all()
-        results['assignments'] = Assignment.query.all()
+        results['students'] = Student.query.all().order_by(Student.sId)
+        results['homeworks'] = Homework.query.all().order_by(
+            Homework.submit_time)
+        results['assignments'] = Assignment.query.all().order_by(Assignment.aId)
         return render_template('remove-and-edit.html',
                                page_header="Remove or Edit Rows",
                                data=results)
@@ -178,9 +179,9 @@ def review_all():
 # show all tables
 def showTables():
     results = {}
-    results['students'] = Student.query.all()
-    results['homeworks'] = Homework.query.all()
-    results['assignments'] = Assignment.query.all()
+    results['students'] = Student.query.all().order_by(Student.sId)
+    results['homeworks'] = Homework.query.all().order_by(Homework.submit_time)
+    results['assignments'] = Assignment.query.all().order_by(Assignment.aId)
     return render_template('showtables.html',
                            page_header="All tables",
                            data=results)
