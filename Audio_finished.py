@@ -228,7 +228,7 @@ def handle_message(event):
         # print(checkExisting)
         if not checkExisting:
             line_bot_api.reply_message(event.reply_token, TextSendMessage(
-                text=f"Your account is currently not associated with a student, please register your account to your student ID (ex: 'register 1')"))
+                text=f"帳號不存在，請回到主選單重新註冊新的ID"))
         else:
             line_bot_api.reply_message(event.reply_token, TextSendMessage(
                 text=f"Hello {checkExisting.sName}!"))
@@ -239,7 +239,7 @@ def handle_message(event):
             student_id = int(msg[8:])
         except:
             line_bot_api.reply_message(event.reply_token, TextSendMessage(
-                text=f"please enter a valid ID (ex: 'register 1')"))
+                text=f"此ID已被使用，請重新輸入有效的ID (ex: 'register 1')"))
         else:
             feedback = registerStudent(student_id, newLineId=user_id)
             line_bot_api.reply_message(event.reply_token, TextSendMessage(
@@ -263,15 +263,15 @@ def handle_message(event):
                                                                                       text='查看題庫',
                                                                                       data='G&查看題庫'
                                                                                   ),
-                                                                                  MessageTemplateAction(
-                                                                                      label='功能3',
-                                                                                      text='功能3',
-                                                                                      data='C&功能3'
+                                                                                  PostbackTemplateAction(
+                                                                                      label='查詢帳號',
+                                                                                      text='查詢帳號',
+                                                                                      data='C&查詢帳號'
                                                                                   ),
-                                                                                  MessageTemplateAction(
-                                                                                      label='功能4',
-                                                                                      text='功能4',
-                                                                                      data='D&功能4'
+                                                                                  PostbackTemplateAction(
+                                                                                      label='註冊帳號',
+                                                                                      text='註冊帳號',
+                                                                                      data='D&註冊帳號'
                                                                                   )
                                                                               ])))
 
@@ -334,6 +334,17 @@ def handle_post_message(event):
             text='本次題庫如下:' + '' + '{final_sample}'.format(final_sample=final_sample)))
     '''
 
+    # call 主選單-查詢帳號狀態功能
+    if event.postback.data[0:1] == "C":
+        line_bot_api.reply_message(
+            event.reply_token, TextSendMessage(text='請輸入"status"，以查詢帳號是否已註冊'))
+
+     # call 主選單-註冊帳號功能
+    if event.postback.data[0:1] == "D":
+        line_bot_api.reply_message(
+            event.reply_token, TextSendMessage(text='請輸入"register"，以註冊新帳號'))
+
+
     # call 主選單-題庫功能-DB端
     if event.postback.data[0:1] == "G":
         assignmentList = displayAssignments()
@@ -358,15 +369,15 @@ def handle_post_message(event):
                                                                                       text='查看題庫',
                                                                                       data='G&查看題庫'
                                                                                   ),
-                                                                                  MessageTemplateAction(
-                                                                                      label='功能3',
-                                                                                      text='功能3',
-                                                                                      data='C&功能3'
+                                                                                  PostbackTemplateAction(
+                                                                                      label='查詢帳號',
+                                                                                      text='查詢帳號',
+                                                                                      data='C&查詢帳號'
                                                                                   ),
-                                                                                  MessageTemplateAction(
-                                                                                      label='功能4',
-                                                                                      text='功能4',
-                                                                                      data='D&功能4'
+                                                                                  PostbackTemplateAction(
+                                                                                      label='註冊帳號',
+                                                                                      text='註冊帳號',
+                                                                                      data='D&註冊帳號'
                                                                                   )
                                                                               ])))
 
