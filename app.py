@@ -10,11 +10,8 @@ import os
 
 # Todo:
 # move functions to separate file?
-# timezone setting?
 # review homework (by /student/id)
 # notifs for students without LINE and homework without students
-# create instructions
-# /secret
 
 app = Flask(__name__)
 app.secret_key = 'secretkeyzzz'
