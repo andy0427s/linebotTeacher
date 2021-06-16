@@ -7,8 +7,14 @@
 
 {% block page_content %}
 {{ super() }}
-<p>Home page or something</p>
-<div><a href="{{ url_for('create') }}">Create New Assignment</a></div>
-<div><a href="{{ url_for('review') }}">Review Assignments</a></div>
+
+
+<div class="d-grid gap-2 col-6 mx-auto">
+    <a class="btn btn-primary btn-lg mt-3" href="{{ url_for('create') }}">Add New Students/Homework/Assignments to the
+        Database</a>
+
+    <a class="btn btn-primary btn-lg mt-3" href="{{ url_for('review') }}">Review Submitted Assignments</a>
+</div>
+
 
 {% endblock page_content %}

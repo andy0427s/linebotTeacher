@@ -10,8 +10,8 @@ import os
 
 # Todo:
 # move functions to separate file?
-# timezone setting?
 # review homework (by /student/id)
+# notifs for students without LINE and homework without students
 
 app = Flask(__name__)
 app.secret_key = 'secretkeyzzz'
@@ -56,6 +56,16 @@ class Assignment(db.Model):
 
     def __repr__(self):
         return f'[Assignment ID: {self.aId}, Prompt: {self.prompt}]'
+
+
+class userVariables(db.Model):
+    __tablename__ = 'variables'
+    lineId = db.Column(db.String(100), primary_key=True)
+    selectedAssignment = db.Column(db.Integer)
+    azureText = db.Column(db.String(100))
+
+    def __repr__(self):
+        return f'[line ID: {self.lineId}, Assignment ID: {self.selectedAssignment}, text: {self.azureText}]'
 
 
 @app.route('/')
@@ -218,6 +228,15 @@ def reset():
     db.session.add_all(entries)
     db.session.commit()
     return redirect('/showtables')
+
+
+@app.route('/secret')
+def secret():
+    query = userVariables.query.all()
+    result = ""
+    for entry in query:
+        result = result+str(entry)+"\n"
+    return result
 
 
 def addStudent(sId, sName, lineId):

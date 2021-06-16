@@ -53,16 +53,6 @@ import azure.cognitiveservices.speech as speechsdk
 import csv
 
 
-class userVariables(db.Model):
-    __tablename__ = 'variables'
-    lineId = db.Column(db.String(100), primary_key=True)
-    selectedAssignment = db.Column(db.Integer)
-    azureText = db.Column(db.String(100))
-
-    def __repr__(self):
-        return f'[line ID: {self.lineId}, Assignment ID: {self.selectedAssignment}, text: {self.azureText}]'
-
-
 # print(data)
 
 # create flask server
