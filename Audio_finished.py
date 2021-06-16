@@ -526,10 +526,6 @@ def handle_audio(event):
 
         # Output Linebot訊息內容 to DB (Most important part!)
 
-        print(f'before adding Homework - saveid_hw = {saveid_hw}')
-        addHomework(int(saveid_hw), user_id,
-                    "https://engscoreaud.s3.amazonaws.com/"+mp3file, score_view)
-
         aws_access_key_id = os.environ.get('AWS_ACCESS_KEY_ID')
         aws_secret_access_key = os.environ.get('AWS_SECRET_ACCESS_KEY')
 
