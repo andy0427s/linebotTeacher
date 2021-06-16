@@ -152,7 +152,8 @@ def handle_assignmentID(user_input):
             azure_text = b
             saveid_hw = a   
             break
-
+    print(user_input)
+    print(saveid_hw)
     # 儲存對比結果(句子內容) & 指定題庫id
     return azure_text , saveid_hw 
 
