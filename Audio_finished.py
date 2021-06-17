@@ -1,8 +1,7 @@
 # import flask related
-from flask import Flask, request, abort
+from flask import request, abort
 
 # import Database
-from flask_sqlalchemy import SQLAlchemy
 from app import *
 
 # import linebot related
@@ -12,48 +11,21 @@ from linebot import (
 from linebot.exceptions import (
     InvalidSignatureError, LineBotApiError
 )
-import boto3
 from linebot.models import *
-from linebot.models import (
-    MessageEvent,
-    TextSendMessage,
-    TemplateSendMessage,
-    ButtonsTemplate,
-    MessageTemplateAction,
-    PostbackEvent,
-    PostbackTemplateAction
-)
 
-# from linebot.models import (
-#     MessageEvent, TextMessage, TextSendMessage, AudioMessage,
-#     LocationSendMessage, ImageSendMessage, StickerSendMessage,
-#     TemplateSendMessage, ButtonsTemplate, MessageTemplateAction
-# )
-
-
-# import urllib
-
-import string
-import time
-import os
-# import azure.cognitiveservices.speech as speechsdk
-
+# for AWS
+import boto3
 
 # Azure related plug-in
-
 import requests
 import base64
 import json
 import time
 import azure.cognitiveservices.speech as speechsdk
 
+import time
+import os
 
-# 題目匯入 for 本機端
-
-import csv
-
-
-# print(data)
 
 # create flask server
 # app = Flask(__name__)
@@ -85,33 +57,6 @@ def callback():
     return 'OK'
 
 
-'''
-# 題庫匯入 (本機端) 
-with open('./dataset_table.csv', newline='') as f:  # path for 題庫
-    reader = csv.reader(f)
-    data = list(reader)  # Dataset from OS
-
-num = 0
-sample = []  # list of (My name is Andy, Good Morning.....)
-index = []  # list of (1, 2, 3......)
-# list of value for Linebot reply (1: My name is Andy, 2: Good Morning....)
-line_sample = []
-
-# 選擇列出多少題庫於LineBot上
-for i in data:
-    num += 1
-    sample.append(i[1])
-    index.append(i[0])
-    new = i[0]+':'+' ' + i[1]  # Combine list of index & list of assignment
-    line_sample.append(new)
-    if num == 30:  # Select 30 samples from dataset
-        break
-
-# Linebot 回覆本機題庫結果
-final_sample = "".join(line_sample)
-'''
-
-
 # 題庫匯入(DB端)
 
 def displayAssignments():
@@ -137,11 +82,8 @@ def displayAssignments():
 
 # 指定題庫同步功能/依照學生選擇的題目，想對應地匯入指定題庫至Azure進行辨識 (DB端)
 
-# azure_text="" #Reference txt for Azure
-# saveid_hw=""# Assign ID for DB
 
 user_id = ""
-path_wav = ""
 
 
 def handle_assignmentID(user_id, user_input):
@@ -157,62 +99,40 @@ def handle_assignmentID(user_id, user_input):
         f"successfully did the thing {user.lineId} {user.selectedAssignment}, {user.azureText}")
 
 
-'''
-
-#指定題庫同步功能/依照學生選擇的題目，想對應地匯入指定題庫至Azure進行辨識 (本機端)
-
-azure_text="" #Reference txt for Azure
-saveid_hw="" # Assign ID for DB 
-user_id=""
-path_wav=""
-
-def handle_assignmentID(user_input):
-    global azure_text, saveid_hw
-    # 對比本機題庫內的Assign ID
-    for a in data: 
-        if user_input == a[0]:
-            azure_text = a[1]
-            saveid_hw = a[0]   
-            break
-
-    # 儲存對比結果(句子內容) & 指定題庫id
-    return azure_text , saveid_hw 
-
-'''
-
-score_view = ""
 # score_view = ""
 
-
-def handle_result(o1, o2, o3, o4, o5):
-    global score_view
+def handle_score(o1, o2, o3, o4, o5):
     score_view = "題目: " + o1 + '\n' + "精確度: " + o2 + '\n' + \
         "流暢度: " + o3 + '\n' + "完整度: " + o4 + '\n' + "綜合分數: " + o5[:5]
     print(score_view)
-    return score_view  # Result for DB
+    return score_view
+
+
+# def handle_result(o1, o2, o3, o4, o5):
+#     global score_view
+#     score_view = "題目: " + o1 + '\n' + "精確度: " + o2 + '\n' + \
+#         "流暢度: " + o3 + '\n' + "完整度: " + o4 + '\n' + "綜合分數: " + o5[:5]
+#     print(score_view)
+#     return score_view  # Result for DB
 
 
 # Linebot 功能列(文字跟語音)
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    # global user_id
-    # 產生user ID
     user_id = event.source.user_id  # student id for DB
-    user_name = line_bot_api.get_profile(
-        user_id).display_name  # student name for DB (Optional)
+    # user_name = line_bot_api.get_profile(user_id).display_name
     msg = event.message.text
     msg = msg.encode('utf-8')
     page_keyword = ['hi', 'back', 'main', 'Back',
                     'Main', 'Hi']  # shortcut for Linebot 主選單
     result_keyword = 'result'
-    audio_message = AudioSendMessage(original_content_url='https://sample-videos.com/audio/mp3/crowd-cheering.mp3',duration=24000)
-    
-    # questions = str(list(range(101)))  # 題目編號for本機端
+    audio_message = AudioSendMessage(
+        original_content_url='https://sample-videos.com/audio/mp3/crowd-cheering.mp3', duration=24000)
 
-    query = userVariables.query.get(user_id)
-    print(f"I am {query}")
-    if not query:
+    user = userVariables.query.get(user_id)
+    print(f"I am {user}")
+    if not user:
         print(f"creating new user {user_id}")
         newuser = userVariables(lineId=user_id)
         db.session.add(newuser)
@@ -277,25 +197,6 @@ def handle_message(event):
                                                                                   )
                                                                               ])))
 
-    '''
-    # 學生選擇題目 from 本機端
-
-    if event.message.text.isdigit():
-        if event.message.text in questions:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(
-                text=f"確認題目編號，請開始錄音!或按下方按鈕返回主選單"))
-
-            # call 題目連結功能
-            handle_assignmentID(event.message.text)
-
-        else:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(
-                text=f"無此題目編號，請重新輸入assignID，或按下方按鈕返回主選單"))
-
-    return user_id
-    
-    '''
-
     # 學生選擇題目from DB
 
     if event.message.text.isdigit():
@@ -315,30 +216,24 @@ def handle_message(event):
 
     # 聽示範音檔功能
     if event.message.text == "audio":
-        line_bot_api.reply_message(event.reply_token,audio_message)
+        line_bot_api.reply_message(event.reply_token, audio_message)
 
     if event.message.text in result_keyword:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(
-            text='請查看評分結果:' + '\n' + '{score_view}'.format(score_view=score_view)))
+            text='請查看評分結果:' + '\n' + '{score_view}'.format(score_view=user.latestScore)))
 
 # 主選單按鈕所有功能
 
 
 @handler.add(PostbackEvent)
 def handle_post_message(event):
+    user = userVariables.query.get(user_id)
     # can not get event text
 
     # call 主選單-錄音功能
     if event.postback.data[0:1] == "A":
         line_bot_api.reply_message(
             event.reply_token, TextSendMessage(text='請輸入題庫assign ID：'))
-
-    '''
-    # call 主選單-題庫功能-本機端
-    if event.postback.data[0:1] == "G":
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(
-            text='本次題庫如下:' + '' + '{final_sample}'.format(final_sample=final_sample)))
-    '''
 
     # call 主選單-查詢帳號狀態功能
     if event.postback.data[0:1] == "C":
@@ -349,7 +244,6 @@ def handle_post_message(event):
     if event.postback.data[0:1] == "D":
         line_bot_api.reply_message(
             event.reply_token, TextSendMessage(text='請輸入"register"，以註冊新帳號'))
-
 
     # call 主選單-題庫功能-DB端
     if event.postback.data[0:1] == "G":
@@ -390,7 +284,7 @@ def handle_post_message(event):
     # call Richmenu-評分功能
     elif event.postback.data[0:1] == "F":
         line_bot_api.reply_message(event.reply_token, TextSendMessage(
-            text='請查看評分結果:' + '\n' + '{score_view}'.format(score_view=score_view)))
+            text='請查看評分結果:' + '\n' + '{score_view}'.format(score_view=user.latestScore)))
 
 
 # Line錄音回傳功能 / 回傳mp3音檔至本機端
@@ -399,8 +293,8 @@ def handle_post_message(event):
 def handle_audio(event):
 
     user_id = event.source.user_id
-    query = userVariables.query.get(user_id)
-    print(f"I am {query}")
+    user = userVariables.query.get(user_id)
+    print(f"I am {user}")
 
     now = time.strftime(
         "%Y%m%d-%H%M", time.localtime(time.time()))  # 按照時間順序新增檔名
@@ -446,7 +340,7 @@ def handle_audio(event):
                 break
             yield chunk
 
-    referenceText = query.azureText  # 依照學生輸入，匯入指定題庫進行辨識(DB端)
+    referenceText = user.azureText  # 依照學生輸入，匯入指定題庫進行辨識(DB端)
 
     # referenceText = 'Hello my name is Andy'  # 依照學生輸入，匯入指定題庫進行辨識(DB端)
 
@@ -507,7 +401,7 @@ def handle_audio(event):
 
     else:
         print('Successful Uploading for result')
-        print(query.azureText)
+        print(user.azureText)
 
         line_bot_api.reply_message(
             event.reply_token, TextSendMessage(text='辨認音檔成功，可以繼續錄製，或按下方按鈕查看評分結果'))
@@ -516,7 +410,8 @@ def handle_audio(event):
         # print(value1, value2, value3, value4, value5)
 
         # call 分數字串處理 function
-        handle_result(value1, value2, value3, value4, value5)
+        user.latestScore = handle_score(value1, value2, value3, value4, value5)
+        db.session.commit()
 
         # Testing part
         # print(int(saveid_hw),user_id,path_wav,score_view)
@@ -550,9 +445,9 @@ def handle_audio(event):
         uploaded = upload_aws(path, "engscoreaud", mp3file)
 
         print(
-            f'before adding Homework - saveid_hw = {query.selectedAssignment}')
-        addHomework(query.selectedAssignment, user_id,
-                    "https://engscoreaud.s3.amazonaws.com/"+mp3file, score_view)
+            f'before adding Homework - saveid_hw = {user.selectedAssignment}')
+        addHomework(aId=user.selectedAssignment, lineId=user_id,
+                    file="https://engscoreaud.s3.amazonaws.com/"+mp3file, label=user.latestScore)
 
 
 # run app on Ngrok (本機端)
