@@ -264,7 +264,7 @@ def handle_post_message(event):
             text=f'本次題庫如下:\n{assignmentList}'))
 
     # call Richmenu-主選單功能
-    elif event.postback.data[0:1] == "E":
+    if event.postback.data[0:1] == "E":
         line_bot_api.reply_message(event.reply_token, TemplateSendMessage(alt_text='目錄 template',
                                                                           template=ButtonsTemplate(
                                                                               title='歡迎使用英語口說Linebot',
