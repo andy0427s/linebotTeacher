@@ -56,12 +56,14 @@
         <tr>
             <th class="fit">Assignment ID</th>
             <th>Prompt</th>
+            <th>Example</th>
         </tr>
     </thead>
     <tbody>
         <tr>
             <td>{{ data['aId'] }}</td>
             <td>{{ data['prompt'] }}</td>
+            <td>{{ data['example'] }}</td>
         </tr>
     </tbody>
 </table>
@@ -134,6 +136,12 @@
             <input type="text" class="form-control" id="new-prompt" name="new-prompt" placeholder='{{ data.prompt }}'
                 value='{{
                 data.prompt }}'>
+        </div>
+        <div class="mb-3">
+            <label for="new-example" class="form-label">Example</label>
+            <input type="text" class="form-control" id="new-example" name="new-example" placeholder='{{ data.example }}'
+                value='{{
+                data.example }}'>
         </div>
     </div>
 

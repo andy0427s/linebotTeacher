@@ -41,11 +41,11 @@ class Homework(db.Model):
     __tablename__ = 'homework'
     aId = db.Column(db.Integer, nullable=False)
     lineId = db.Column(db.String(100), nullable=False)
+    # AWS link to uploaded file
     file = db.Column(db.String(100), primary_key=True)
     submit_time = db.Column(db.DateTime, nullable=False,
                             default=datetime.now().replace(microsecond=0))
-    # result from Azure
-    label = db.Column(db.String(100))
+    label = db.Column(db.String(100))  # result from Azure
 
     def __repr__(self):
         return f'[Assignment ID: {self.aId}, LINE: {self.lineId}, File: {self.file}, Submit Time: {self.submit_time}, label: {self.label}]'
@@ -55,9 +55,10 @@ class Assignment(db.Model):
     __tablename__ = 'assignment'
     aId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     prompt = db.Column(db.String(100))
+    example = db.Column(db.String(100))  # AWS link to sample
 
     def __repr__(self):
-        return f'[Assignment ID: {self.aId}, Prompt: {self.prompt}]'
+        return f'[Assignment ID: {self.aId}, Prompt: {self.prompt}, Example: {self.example}]'
 
 
 class userVariables(db.Model):
@@ -94,7 +95,8 @@ def create():
             message = addHomework(aId, lineId, file, label)
         elif tab_type == "assignments":
             prompt = request.form['a-prompt']
-            message = addAssignment(prompt)
+            example = request.form['a-example']
+            message = addAssignment(prompt, example)
         flash(message)
     return render_template('create.html',
                            page_header="Add Data to Table")
@@ -166,7 +168,9 @@ def edit():
         aId = request.form['a-aId']
         newId = request.form['new-aId']
         newPrompt = request.form['new-prompt']
-        message = updateAssignment(aId, newId=newId, newPrompt=newPrompt)
+        newExample = request.form['new-example']
+        message = updateAssignment(
+            aId, newId=newId, newPrompt=newPrompt, newExample=newExample)
     else:
         message = "Something went wrong"
     flash(message)
@@ -180,8 +184,6 @@ def review():
 
 @app.route('/review/all')
 def review_all():
-    # query = db.session.query(Homework, Student).join(
-    #     Student, Homework.lineId == Student.lineId)
     query = db.session.query(Homework, Student, Assignment).join(
         Student, Homework.lineId == Student.lineId, isouter=True).join(Assignment, Homework.aId == Assignment.aId, isouter=True).order_by(Homework.submit_time.desc())
     return render_template('review.html',
@@ -264,9 +266,9 @@ def addHomework(aId, lineId, file, label=None):
         return f"failed to add homework {entry}"
 
 
-def addAssignment(prompt):
+def addAssignment(prompt, example=None):
     # this shouldn't ever error so no need to try/except
-    entry = Assignment(prompt=prompt)
+    entry = Assignment(prompt=prompt, example=example)
     db.session.add(entry)
     db.session.commit()
     return f"added assignment {entry}!"
@@ -371,7 +373,7 @@ def updateHomework(file, newaId=None, newLineId=None, newFile=None, newLabel=Non
         return f"failed to find homework {file}"
 
 
-def updateAssignment(aId, newId=None, newPrompt=None):
+def updateAssignment(aId, newId=None, newPrompt=None, newExample=None):
     query = Assignment.query.get(aId)
     olddata = query.__repr__()
     if query:
@@ -379,7 +381,8 @@ def updateAssignment(aId, newId=None, newPrompt=None):
             query.aId = newId
         if newPrompt:
             query.prompt = newPrompt
-            print(newPrompt)
+        if newExample:
+            query.example = newExample
         try:
             db.session.commit()
             newdata = query.__repr__()
