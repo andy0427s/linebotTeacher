@@ -13,6 +13,7 @@ import os
 # review homework (by /student/id)
 # notifs for students without LINE and homework without students
 # demo students and assignments
+# teacher example uploading?
 
 app = Flask(__name__)
 app.secret_key = 'secretkeyzzz'
@@ -214,21 +215,21 @@ def clear():
 def reset():
     db.drop_all()
     db.create_all()
-    s1 = Student(sId=1, sName="Bob", lineId="e109bs")
-    s2 = Student(sId=2, sName="Alice", lineId="a983g")
-    s3 = Student(sId=3, sName="Charlie", lineId="f027k")
-    s4 = Student(sId=4, sName="Dylan", lineId="m410p")
-    s5 = Student(sId=5, sName="Eve")
-    a1 = Assignment(prompt="You should go to the store")
-    a2 = Assignment(prompt="He finished his breakfast early")
-    a3 = Assignment(prompt="The flowers bloomed early this year")
-    h1 = Homework(aId=2, lineId='f027k', file="uploaded/h1.wav")
-    h2 = Homework(aId=1, lineId='f027k', file="uploaded/h2.wav")
-    h3 = Homework(aId=2, lineId='m410p', file="uploaded/h3.wav")
-    h4 = Homework(aId=3, lineId='f027k', file="uploaded/h4.wav")
-    h5 = Homework(aId=3, lineId='e109bs',
-                  file="uploaded/test.mp3", label="playback test")
-    entries = [s1, s2, s3, s4, s5, a1, a2, a3, h1, h2, h3, h4, h5]
+    s1 = Student(sId=1, sName="Test", lineId="e109bs")
+    s2 = Student(sId=2, sName="Clark")
+    s3 = Student(sId=3, sName="Leo")
+    s4 = Student(sId=4, sName="Andy")
+    s5 = Student(sId=5, sName="YunShan")
+    a1 = Assignment(prompt="You should go to the store",
+                    example="https://engscoreaud.s3.amazonaws.com/sample1.mp3")
+    a2 = Assignment(prompt="He finished his breakfast early",
+                    example="https://engscoreaud.s3.amazonaws.com/sample2.mp3")
+    a3 = Assignment(prompt="The flowers bloomed early this year",
+                    example="https://engscoreaud.s3.amazonaws.com/sample3.mp3")
+    a4 = Assignment(prompt="Don't eat Don's donuts")
+    a5 = Assignment(prompt="You can never have too much bread")
+    h1 = Homework(aId=1, lineId='e109bs', file="/recording/test.mp3")
+    entries = [s1, s2, s3, s4, s5, a1, a2, a3, a4, a5, h1]
     db.session.add_all(entries)
     db.session.commit()
     return redirect('/showtables')
