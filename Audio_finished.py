@@ -119,7 +119,6 @@ def handle_score(o1, o2, o3, o4, o5):
 # Linebot 功能列(文字跟語音)
 
 @handler.add(MessageEvent, message=TextMessage)
-user = userVariables.query.get(user_id)
 def handle_message(event):
     user_id = event.source.user_id  # student id for DB
     # user_name = line_bot_api.get_profile(user_id).display_name
@@ -241,7 +240,6 @@ def handle_message(event):
 
 
 @handler.add(PostbackEvent)
-user = userVariables.query.get(user_id)
 def handle_post_message(event):
     user = userVariables.query.get(user_id)
     # can not get event text
@@ -306,7 +304,6 @@ def handle_post_message(event):
 # Line錄音回傳功能 / 回傳mp3音檔至本機端
 
 @handler.add(MessageEvent, message=AudioMessage)
-user = userVariables.query.get(user_id)
 def handle_audio(event):
 
     user_id = event.source.user_id
