@@ -239,6 +239,7 @@ def handle_message(event):
 
 @handler.add(PostbackEvent)
 def handle_post_message(event):
+    user_id = event.source.user_id
     user = userVariables.query.get(user_id)
     # can not get event text
 
