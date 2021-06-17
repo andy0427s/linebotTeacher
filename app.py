@@ -220,6 +220,9 @@ def reset():
     s3 = Student(sId=3, sName="Leo")
     s4 = Student(sId=4, sName="Andy")
     s5 = Student(sId=5, sName="YunShan")
+    s6 = Student(sId=6, sName="DemoStudent1")
+    s7 = Student(sId=7, sName="DemoStudent2")
+    s8 = Student(sId=8, sName="DemoStudent3")
     a1 = Assignment(prompt="You should go to the store",
                     example="https://engscoreaud.s3.amazonaws.com/sample1.mp3")
     a2 = Assignment(prompt="He finished his breakfast early",
@@ -229,7 +232,7 @@ def reset():
     a4 = Assignment(prompt="Don't eat Don's donuts")
     a5 = Assignment(prompt="You can never have too much bread")
     h1 = Homework(aId=1, lineId='e109bs', file="/recording/test.mp3")
-    entries = [s1, s2, s3, s4, s5, a1, a2, a3, a4, a5, h1]
+    entries = [s1, s2, s3, s4, s5, s6, s7, s8, a1, a2, a3, a4, a5, h1]
     db.session.add_all(entries)
     db.session.commit()
     return redirect('/showtables')
