@@ -13,7 +13,6 @@ import os
 # review homework (by /student/id)
 # notifs for students without LINE and homework without students
 # demo students and assignments
-# replace globals
 
 app = Flask(__name__)
 app.secret_key = 'secretkeyzzz'
