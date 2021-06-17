@@ -217,7 +217,7 @@ def handle_message(event):
         # Query from DB for audio sample
         aId = user.selectedAssignment
         selectedAudio = Assignment.query.get(aId).example
-        if selectedAudio[None, "", "None"]:
+        if selectedAudio in [None, "", "None"]:
             line_bot_api.reply_message(event.reply_token,
                                        [TextSendMessage(text=f"目前無此題目音檔")])
         else:
