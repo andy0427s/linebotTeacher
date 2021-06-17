@@ -119,6 +119,7 @@ def handle_score(o1, o2, o3, o4, o5):
 # Linebot 功能列(文字跟語音)
 
 @handler.add(MessageEvent, message=TextMessage)
+user = userVariables.query.get(user_id)
 def handle_message(event):
     user_id = event.source.user_id  # student id for DB
     # user_name = line_bot_api.get_profile(user_id).display_name
@@ -127,8 +128,12 @@ def handle_message(event):
     page_keyword = ['hi', 'back', 'main', 'Back',
                     'Main', 'Hi']  # shortcut for Linebot 主選單
     result_keyword = 'result'
+
+    # Query from DB for audio sample
+    aId = user.selectedAssignment
+    selectedaudio = Assignment.query.get(aId).example
     audio_message = AudioSendMessage(
-        original_content_url='https://sample-videos.com/audio/mp3/crowd-cheering.mp3', duration=24000)
+        original_content_url= selectedaudio, duration=24000)
 
     user = userVariables.query.get(user_id)
     print(f"I am {user}")
@@ -215,9 +220,19 @@ def handle_message(event):
                 text=f"無此題目編號，請重新輸入assignID，或按下方按鈕返回主選單"))
 
     # 聽示範音檔功能
-    if event.message.text == "audio":
-        line_bot_api.reply_message(event.reply_token, audio_message)
+    if event.message.text.lower()[0:4] == "audio":
+        if example [None, "", "None"]:
+            line_bot_api.reply_message(event.reply_token,
+                                       [TextSendMessage(text=f"目前無此題目音檔")])
+        else:
+            try:
+                line_bot_api.reply_message(event.reply_token, audio_message)
+            except:
+                line_bot_api.reply_message(event.reply_token,
+                                       [TextSendMessage(text=f"無法播放此音檔")])
 
+
+    # 手動評分結果
     if event.message.text in result_keyword:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(
             text='請查看評分結果:' + '\n' + '{score_view}'.format(score_view=user.latestScore)))
@@ -226,6 +241,7 @@ def handle_message(event):
 
 
 @handler.add(PostbackEvent)
+user = userVariables.query.get(user_id)
 def handle_post_message(event):
     user = userVariables.query.get(user_id)
     # can not get event text
@@ -243,7 +259,7 @@ def handle_post_message(event):
      # call 主選單-註冊帳號功能
     if event.postback.data[0:1] == "D":
         line_bot_api.reply_message(
-            event.reply_token, TextSendMessage(text='請輸入"register"，以註冊新帳號'))
+            event.reply_token, TextSendMessage(text='請輸入"register"，以註冊新帳號(ex: "register 1")'))
 
     # call 主選單-題庫功能-DB端
     if event.postback.data[0:1] == "G":
@@ -284,12 +300,14 @@ def handle_post_message(event):
     # call Richmenu-評分功能
     elif event.postback.data[0:1] == "F":
         line_bot_api.reply_message(event.reply_token, TextSendMessage(
-            text='請查看評分結果:' + '\n' + '{score_view}'.format(score_view=user.latestScore)))
+            text='請查看評分結果:' + '\n' + '{score_view}'.format(score_view=user.latestScore)
+            + "\n" + "如要聆聽示範音檔，請輸入audio(ex: 'audio 1')" ))
 
 
 # Line錄音回傳功能 / 回傳mp3音檔至本機端
 
 @handler.add(MessageEvent, message=AudioMessage)
+user = userVariables.query.get(user_id)
 def handle_audio(event):
 
     user_id = event.source.user_id
