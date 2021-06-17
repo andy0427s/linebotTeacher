@@ -222,7 +222,7 @@ def handle_message(event):
                                        [TextSendMessage(text=f"目前無此題目音檔")])
         else:
             audio_message = AudioSendMessage(
-                original_content_url=selectedAudio, duration=24000)
+                original_content_url=selectedAudio, duration=5000)
             try:
                 line_bot_api.reply_message(event.reply_token, audio_message)
             except:
