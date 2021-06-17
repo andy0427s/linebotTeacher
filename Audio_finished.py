@@ -294,12 +294,10 @@ def handle_post_message(event):
                                                                               ])))
 
     # call Richmenu-評分功能
-    if event.postback.data[0:1] == "F":
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(
-            text='請查看評分結果:' + '\n' + '{score_view}'.format(score_view=user.latestScore)))
-
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(
-            text='如要聆聽示範音檔，請輸入example'))
+    elif event.postback.data[0:1] == "F":
+        line_bot_api.reply_message(event.reply_token,
+                                   [TextSendMessage(text=f"請查看評分結果:\n{user.latestScore}"),
+                                    TextSendMessage(text="如要聆聽示範音檔，請輸入 'example'")])
 
 
 # Line錄音回傳功能 / 回傳mp3音檔至本機端
