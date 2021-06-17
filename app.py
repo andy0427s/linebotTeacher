@@ -12,6 +12,8 @@ import os
 # move functions to separate file?
 # review homework (by /student/id)
 # notifs for students without LINE and homework without students
+# demo students and assignments
+# replace globals
 
 app = Flask(__name__)
 app.secret_key = 'secretkeyzzz'
@@ -63,9 +65,10 @@ class userVariables(db.Model):
     lineId = db.Column(db.String(100), primary_key=True)
     selectedAssignment = db.Column(db.Integer)
     azureText = db.Column(db.String(100))
+    latestScore = db.Column(db.String(100))
 
     def __repr__(self):
-        return f'[line ID: {self.lineId}, Assignment ID: {self.selectedAssignment}, text: {self.azureText}]'
+        return f'[line ID: {self.lineId}, Assignment ID: {self.selectedAssignment}, text: {self.azureText}, latest score: {self.latestScore}]'
 
 
 @app.route('/')
@@ -235,7 +238,7 @@ def secret():
     query = userVariables.query.all()
     result = ""
     for entry in query:
-        result = result+str(entry)+"\n"
+        result = result+f"<p>{str(entry)}</p>"
     return result
 
 
