@@ -75,7 +75,7 @@ class userVariables(db.Model):
 @app.route('/')
 def index():
     return render_template('index.html',
-                           page_header="Home")
+                           page_header="Welcome to AI Academy!")
 
 
 @app.route('/create', methods=['GET', 'POST'])
