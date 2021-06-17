@@ -1,6 +1,6 @@
 {% extends "parts/base.html" %}
 
-{% block title %}Home{% endblock title %}
+{% block title %}Welcome to Teacher Bot System{% endblock title %}
 {% block scripts %}
 {{ super() }}
 {% endblock scripts %}
@@ -8,7 +8,16 @@
 {% block page_content %}
 {{ super() }}
 
-
+<div class="mySlides w3-display-container w3-center">
+    <img src="https://images.unsplash.com/photo-1542435503-956c469947f6?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=967&q=80" style="width:60%; height:70%">
+    <div class="w3-display-bottommiddle w3-container w3-text-white w3-padding-32 w3-hide-small">
+      <h3 class="blackTextOverride">AI Academy</h3>
+      <p style="color:grey"><b>Your Favourite Teaching Platform</b></p>   
+    </div>
+  </div>
+ 
+    </div>
+  </div>
 <div class="d-grid gap-2 col-6 mx-auto">
     <a class="btn btn-success btn-lg mt-3" href="{{ url_for('create') }}">Add New Students/Homework/Assignments to the
         Database</a>
