@@ -9,10 +9,10 @@ import os
 #
 
 # Todo:
+# clean up readme
 # move functions to separate file?
 # review homework (by /student/id)
 # notifs for students without LINE and homework without students
-# demo students and assignments
 # teacher example uploading?
 
 app = Flask(__name__)
@@ -41,7 +41,6 @@ class Homework(db.Model):
     __tablename__ = 'homework'
     aId = db.Column(db.Integer, nullable=False)
     lineId = db.Column(db.String(100), nullable=False)
-    # AWS link to uploaded file
     file = db.Column(db.String(100), primary_key=True)
     submit_time = db.Column(db.DateTime, nullable=False,
                             default=datetime.now().replace(microsecond=0))
@@ -154,6 +153,8 @@ def edit():
         newId = request.form['new-sId']
         newName = request.form['new-sName']
         newLineId = request.form['new-lineId']
+        if newLineId in ["", "None", None]:
+            newLineId = None
         message = updateStudent(sId, newId=newId, newName=newName,
                                 newLineId=newLineId)
     elif edit_type == "homework":
@@ -220,9 +221,10 @@ def reset():
     s3 = Student(sId=3, sName="Leo")
     s4 = Student(sId=4, sName="Andy")
     s5 = Student(sId=5, sName="YunShan")
-    s6 = Student(sId=6, sName="DemoStudent1")
-    s7 = Student(sId=7, sName="DemoStudent2")
-    s8 = Student(sId=8, sName="DemoStudent3")
+    s6 = Student(sId=6, sName="Johnson")
+    s7 = Student(sId=7, sName="DemoStudent1")
+    s8 = Student(sId=8, sName="DemoStudent2")
+    s9 = Student(sId=9, sName="DemoStudent3")
     a1 = Assignment(prompt="You should go to the store",
                     example="https://engscoreaud.s3.amazonaws.com/sample1.mp3")
     a2 = Assignment(prompt="He finished his breakfast early",
@@ -232,7 +234,7 @@ def reset():
     a4 = Assignment(prompt="Don't eat Don's donuts")
     a5 = Assignment(prompt="You can never have too much bread")
     h1 = Homework(aId=1, lineId='e109bs', file="/static/uploaded/test.mp3")
-    entries = [s1, s2, s3, s4, s5, s6, s7, s8, a1, a2, a3, a4, a5, h1]
+    entries = [s1, s2, s3, s4, s5, s6, s7, s8, s9, a1, a2, a3, a4, a5, h1]
     db.session.add_all(entries)
     db.session.commit()
     return redirect('/showtables')
@@ -248,7 +250,9 @@ def secret():
 
 
 def addStudent(sId, sName, lineId):
-    entry = Student(sId=sId, sName=sName, lineId=lineId)
+    if lineId in ["", "None", None]:
+        newlineId = None
+    entry = Student(sId=sId, sName=sName, lineId=newlineId)
     try:
         db.session.add(entry)
         db.session.commit()
@@ -320,6 +324,8 @@ def updateStudent(sId, newId=None, newName=None, newLineId=None):
             query.sName = newName
         if newLineId:
             query.lineId = newLineId
+        if newLineId in ["", "None", None]:
+            query.lineId = None
         try:
             db.session.commit()
             newdata = query.__repr__()
