@@ -8,7 +8,27 @@
 {% block page_content %}
 {{ super() }}
 
-
+<div class="mySlides w3-display-container w3-center">
+    <img src="https://images.unsplash.com/photo-1542435503-956c469947f6?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=967&q=80" style="width:100%">
+    <div class="w3-display-bottommiddle w3-container w3-text-white w3-padding-32 w3-hide-small">
+      <h3>Los Angeles</h3>
+      <p><b>We had the best time playing at Venice Beach!</b></p>   
+    </div>
+  </div>
+  <div class="mySlides w3-display-container w3-center">
+    <img src="https://images.unsplash.com/photo-1477414348463-c0eb7f1359b6?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80" style="width:100%">
+    <div class="w3-display-bottommiddle w3-container w3-text-white w3-padding-32 w3-hide-small">
+      <h3>New York</h3>
+      <p><b>The atmosphere in New York is lorem ipsum.</b></p>    
+    </div>
+  </div>
+  <div class="mySlides w3-display-container w3-center">
+    <img src="https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=967&q=80" style="width:100%">
+    <div class="w3-display-bottommiddle w3-container w3-text-white w3-padding-32 w3-hide-small">
+      <h3>Chicago</h3>
+      <p><b>Thank you, Chicago - A night we won't forget.</b></p>    
+    </div>
+  </div>
 <div class="d-grid gap-2 col-6 mx-auto">
     <a class="btn btn-success btn-lg mt-3" href="{{ url_for('create') }}">Add New Students/Homework/Assignments to the
         Database</a>
@@ -16,5 +36,20 @@
     <a class="btn btn-success btn-lg mt-3" href="{{ url_for('review') }}">Review Submitted Assignments</a>
 </div>
 
+<script>
+    var myIndex = 0;
+carousel();
 
+function carousel() {
+  var i;
+  var x = document.getElementsByClassName("mySlides");
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";  
+  }
+  myIndex++;
+  if (myIndex > x.length) {myIndex = 1}    
+  x[myIndex-1].style.display = "block";  
+  setTimeout(carousel, 4000);    
+}
+</script>
 {% endblock page_content %}
