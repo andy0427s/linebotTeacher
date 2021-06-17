@@ -231,7 +231,7 @@ def reset():
                     example="https://engscoreaud.s3.amazonaws.com/sample3.mp3")
     a4 = Assignment(prompt="Don't eat Don's donuts")
     a5 = Assignment(prompt="You can never have too much bread")
-    h1 = Homework(aId=1, lineId='e109bs', file="/recording/test.mp3")
+    h1 = Homework(aId=1, lineId='e109bs', file="/static/uploaded/test.mp3")
     entries = [s1, s2, s3, s4, s5, s6, s7, s8, a1, a2, a3, a4, a5, h1]
     db.session.add_all(entries)
     db.session.commit()
