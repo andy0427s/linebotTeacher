@@ -206,6 +206,8 @@ def handle_message(event):
     page_keyword = ['hi', 'back', 'main', 'Back',
                     'Main', 'Hi']  # shortcut for Linebot 主選單
     result_keyword = 'result'
+    audio_message = AudioSendMessage(original_content_url='https://sample-videos.com/audio/mp3/crowd-cheering.mp3',duration=24000)
+    
     # questions = str(list(range(101)))  # 題目編號for本機端
 
     query = userVariables.query.get(user_id)
@@ -310,6 +312,10 @@ def handle_message(event):
         else:
             line_bot_api.reply_message(event.reply_token, TextSendMessage(
                 text=f"無此題目編號，請重新輸入assignID，或按下方按鈕返回主選單"))
+
+    # 聽示範音檔功能
+    if event.message.text == "audio":
+        line_bot_api.reply_message(event.reply_token,audio_message)
 
     if event.message.text in result_keyword:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(
