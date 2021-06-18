@@ -310,7 +310,7 @@ def handle_audio(event):
     print(f"I am {user}")
 
     now = time.strftime(
-        "%Y%m%d-%H%M", time.localtime(time.time()))  # 按照時間順序新增檔名
+        "%Y%m%d-%H%M%S%f", time.localtime(time.time()))  # 按照時間順序新增檔名
     audio_name = '_hw'
     audio_content = line_bot_api.get_message_content(event.message.id)
     mp3file = now+audio_name+'.mp3'
