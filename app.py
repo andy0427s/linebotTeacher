@@ -1,6 +1,6 @@
 from flask import Flask, render_template, url_for, request, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from sqlalchemy.sql import func
 import os
 
 # main goal:
@@ -42,8 +42,8 @@ class Homework(db.Model):
     aId = db.Column(db.Integer, nullable=False)
     lineId = db.Column(db.String(100), nullable=False)
     file = db.Column(db.String(100), primary_key=True)
-    submit_time = db.Column(db.DateTime, nullable=False,
-                            default=datetime.now().replace(microsecond=0))
+    submit_time = db.Column(db.DateTime(timezone=True),
+                            server_default=func.now())
     label = db.Column(db.String(100))  # result from Azure
 
     def __repr__(self):
