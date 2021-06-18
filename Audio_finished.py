@@ -23,7 +23,7 @@ import json
 import time
 import azure.cognitiveservices.speech as speechsdk
 
-import time
+from datetime import datetime
 import os
 
 
@@ -309,8 +309,7 @@ def handle_audio(event):
     user = userVariables.query.get(user_id)
     print(f"I am {user}")
 
-    now = time.strftime(
-        "%Y%m%d-%H%M%S%f", time.localtime(time.time()))  # 按照時間順序新增檔名
+    now = datetime.now().strftime("%Y%m%d-%H%M%S%f")  # 按照時間順序新增檔名
     audio_name = '_hw'
     audio_content = line_bot_api.get_message_content(event.message.id)
     mp3file = now+audio_name+'.mp3'
