@@ -11,7 +11,6 @@ Allows a teacher to view audio recordings sent by students via LINE
 
 1. Select the question they would like to upload
 ![images](https://github.com/andy0427s/linebotTeacher/blob/main/imgs/Picture1.png)
-
 ![images](https://github.com/andy0427s/linebotTeacher/blob/main/imgs/Picture2.png)
 
 2. Start the recording
