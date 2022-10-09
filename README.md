@@ -1,6 +1,6 @@
 # Linebot Oral English Teacher
 
-![image]()
+![image](https://github.com/andy0427s/linebotTeacher/blob/main/imgs/Screen%20Shot%202022-10-09%20at%203.52.30%20PM.png)
 
 
 
