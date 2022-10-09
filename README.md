@@ -7,12 +7,31 @@ This is a tool for students to upload their homework like audio recordings throu
 
 Allows a teacher to view audio recordings sent by students via LINE
 
+### Use case for students:
+
+1. Select the question they would like to upload
 ![images](https://github.com/andy0427s/linebotTeacher/blob/main/imgs/Picture1.png)
+
 ![images](https://github.com/andy0427s/linebotTeacher/blob/main/imgs/Picture2.png)
+
+2. Start the recording
+
 ![images](https://github.com/andy0427s/linebotTeacher/blob/main/imgs/Picture3.png)
+
+3. The system receives the recording from students and give feedback
+
 ![images](https://github.com/andy0427s/linebotTeacher/blob/main/imgs/Picture4.png)
+
+### Use case for teachers
+
+1. In the remove/edit page, they can do the CRUD operations to the students homework if they think the autograde given by the system should be revaluated.
+
 ![images](https://github.com/andy0427s/linebotTeacher/blob/main/imgs/Picture5.png)
+
+2. In the review page, they can review student's homework manually.
+3. 
 ![images](https://github.com/andy0427s/linebotTeacher/blob/main/imgs/Picture6.png)
+
 ![images](https://github.com/andy0427s/linebotTeacher/blob/main/imgs/Picture7.png)
 
 ## Documentation
@@ -27,11 +46,10 @@ See the official API documentation for more information.
 
 This library requires Python 3.6 or later.
 
+
+## Flowchart
+
 ![image](https://github.com/andy0427s/linebotTeacher/blob/main/imgs/Screen%20Shot%202022-10-09%20at%203.52.30%20PM.png)
-
-## Installation
-
-
 
 
 ## Modules
@@ -40,9 +58,6 @@ This project contains the following modules:
 
  * line-bot-api-client: API client library for the Messaging API
  * line-bot-model: Model classes for the Messaging API
-
-
-
 
 
 
