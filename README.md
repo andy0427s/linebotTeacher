@@ -3,15 +3,6 @@
 ![image](https://github.com/TheSodacan/linebotTeacher/blob/main/imgs/Workflow2.png)
 
 
-工作日誌
-
-6/8 
-全員設置好Github專案
-完成Linebot 基礎設置 ＋ Heroku 串接 
-
-Andy on 2021.06.08
-
-
 
 
 ## Introduction
