@@ -1,8 +1,12 @@
 # Linebot Oral English Teacher
 
-
-
-
+![images](https://github.com/andy0427s/linebotTeacher/blob/main/imgs/Picture1.png)
+![images](https://github.com/andy0427s/linebotTeacher/blob/main/imgs/Picture2.png)
+![images](https://github.com/andy0427s/linebotTeacher/blob/main/imgs/Picture3.png)
+![images](https://github.com/andy0427s/linebotTeacher/blob/main/imgs/Picture4.png)
+![images](https://github.com/andy0427s/linebotTeacher/blob/main/imgs/Picture5.png)
+![images](https://github.com/andy0427s/linebotTeacher/blob/main/imgs/Picture6.png)
+![images](https://github.com/andy0427s/linebotTeacher/blob/main/imgs/Picture7.png)
 
 
 ## Introduction
