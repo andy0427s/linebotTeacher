@@ -29,10 +29,9 @@ Allows a teacher to view audio recordings sent by students via LINE
 ![images](https://github.com/andy0427s/linebotTeacher/blob/main/imgs/Picture5.png)
 
 2. In the review page, they can review student's homework manually.
-3. 
+ 
 ![images](https://github.com/andy0427s/linebotTeacher/blob/main/imgs/Picture6.png)
 
-![images](https://github.com/andy0427s/linebotTeacher/blob/main/imgs/Picture7.png)
 
 ## Documentation
 
