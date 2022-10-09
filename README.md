@@ -1,6 +1,6 @@
-# Linebot Oral English Teacher
+# Chatbot Oral English Teacher
 
-
+This is a tool for students to upload their homework like audio recordings througth social media (Line), when audio be uploaded on the platform, AI by Azure will analyse the recording and give intial feedback based on the crietia of their pronounciation. For teachers, they have the access to the backend page to review all the recording sent from students.
 
 
 ## Introduction
