@@ -1,6 +1,6 @@
 # Linebot Oral English Teacher
 
-![image](https://github.com/andy0427s/linebotTeacher/blob/main/imgs/Screen%20Shot%202022-10-09%20at%203.52.30%20PM.png)
+
 
 
 
@@ -21,6 +21,7 @@ See the official API documentation for more information.
 
 This library requires Python 3.6 or later.
 
+![image](https://github.com/andy0427s/linebotTeacher/blob/main/imgs/Screen%20Shot%202022-10-09%20at%203.52.30%20PM.png)
 
 ## Installation
 
